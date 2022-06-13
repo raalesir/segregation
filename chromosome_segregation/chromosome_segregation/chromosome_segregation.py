@@ -1,6 +1,6 @@
 """Main module."""
 
-from  chromosome_segregation.chromosome_segregation.aux import  plot, glue_s, rescale_s, save_results, load_data
+from  chromosome_segregation.chromosome_segregation.aux import  plot, glue_s, rescale_s, save_results, load_data, cache_n_conf
 
 from  chromosome_segregation.chromosome_segregation.simulation import WL, URW
 
@@ -136,7 +136,6 @@ def run(n, n_steps, bins=None, counts=None):
     s_right, n_sweeps_right = WL(n, max_overlaps, min_overlaps, exclude=exclude, alpha=alpha,
                                  sweep_length=sweep_length, grain=grain, ds_min=ds_min, flatness=flatness)
 
-    #     s_right,n_sweeps_right = None, None
     metrics['WL_right_run_time'] = time.time() - start_time
     metrics['n_sweeps_right'] = n_sweeps_right
     logging.info("Running WL-left took %4.0f seconds and %i sweeps" % (metrics['WL_right_run_time'], n_sweeps_right))
@@ -177,6 +176,12 @@ if __name__ == "__main__":
 
     ns = [80, 80]
     n_stepss = [200000, 2000000]
+    logging.info("caching the number of confs... can take several minutes")
+
+    caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
+    logging.info("done caching. The cache shape is %s" % str(caches.shape))
+
+
     logging.info("looping number of beads")
     for n, n_steps in zip(ns, n_stepss):
         logging.info('number of beads %i, number of steps %i' %(n, n_steps))

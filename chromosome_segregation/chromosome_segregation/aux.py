@@ -6,6 +6,8 @@ import  json
 import  numpy as np
 
 import  math
+import  logging
+from scipy.optimize import curve_fit
 
 RESULTS_FOLDER = 'results'
 
@@ -179,3 +181,104 @@ def glue_s(bins, counts, s_left, s_right):
     total_s = total_s / np.nansum(total_s)
 
     return total_s
+
+
+def n_conf(N, dx, dy, dz):
+    """
+    calculates the number of conformations  of ideal grid polymer given
+    number of bonds and displacements along the grid.
+    """
+    dx = abs(dx); dy = abs(dy); dz = abs(dz)
+
+
+    if ((N - dx - dy + dz) % 2 != 0) | ((N - dx - dy - dz) % 2 != 0):
+        return 0
+    else:
+
+        n_plus = int((N - dx - dy + dz) / 2)
+        n_minus = int((N - dx - dy - dz) / 2)
+
+        numerator = math.factorial(N)
+        res = 0.0
+        for x in range(n_minus + 1):
+            for y in range(n_minus - x + 1):
+                res += numerator / math.factorial(x) / math.factorial(x + dx) / math.factorial(y) / math.factorial(
+                    y + dy) / \
+                       math.factorial(n_plus - x - y) / math.factorial(n_minus - x - y)
+
+        return res
+
+
+
+def cache_n_conf(N_, dx, dy, dz):
+    """
+    caches the n_conf for each point on the grid given by dz, dy, dz
+    """
+    res = []
+    for n in range(N_):
+        for i in range(dx):
+            for j in range(dy):
+                for k in range(dz):
+                    res.append(n_conf(n + 1, i, j, k))
+                    # print(n+1, i, j, k, n_conf(n+1,i,j,k))
+    return np.array(res).reshape(N_, dx, dy, dz)  # .astype(int)
+    # return re
+
+
+
+def calculate_saw_fraction(path):
+    """
+    produces fraction of SAW for a given ``path`` where results of a single experiment  are stored. e.g 'results/10/run_1'.
+    The glued `s` can contain NANs, since `s_right` can be calculated not for  every overlap in order to speed up convergence.
+    The right-hand side tail looks like  a straight line, so we fit the right tail with a line and filling the missed data
+    (NANs) with the data after fitting a line.
+    """
+
+    def func(x, a, b):
+        return a * x + b
+
+    logging.info("extracting `n` from the path")
+    n = int(path.split('/')[1])
+    logging.info("n=%i" %n)
+    logging.info('loading  saved results...')
+    s_left, s_right, s_total, bins, counts, metrics = load_data(path)
+    logging.info("done loading saved data")
+
+    #     print('sum of s_total', np.nansum(s_total), path)
+    first_index = np.nanargmax(np.isnan(s_total)) -1 # the  index before the  first  NAN in s_total
+    if first_index > 0: # it there are NaNs!
+        last_index = len(s_total)
+        logging.info('first  index to fit %i, last is  %i'%(first_index, last_index))
+        y_data = s_total[first_index:last_index]
+        x_data = range(len(y_data))
+        real_data_length = len(x_data)
+
+        # filtering NaNs from y_data and keep sync with  x_data
+        # it scipy can not fit curve with nans
+        logging.info("removing NANs from data to fit...")
+        data = [(p[0], p[1]) for p in zip(y_data, x_data) if not p[0] != p[0]]
+
+        y_data, x_data = list(zip(*data))
+        y_data = np.log(np.array(y_data))  # transform to ln
+        x_data = np.array(x_data)
+
+        logging.info("data is ready for fitting.")
+        # fitting
+        refilled_data = []
+        try:
+            popt, pcov = curve_fit(func, x_data, y_data)
+            # adding points missed
+            refilled_data = [func(x, *popt) for x in range(real_data_length)]
+            refilled_data = np.exp(refilled_data)
+        except:
+            pass
+        logging.info("joining back filled piece with added points")
+
+        s_total_joined = np.concatenate((s_total[:first_index], refilled_data, s_total[last_index:]))
+
+        # renorming
+        s_total_joined_normed = s_total_joined / np.sum(s_total_joined)
+        return round(1 / n, 4), np.log(s_total_joined_normed[0]) / n, s_total_joined_normed
+    else:
+        return round(1 / n, 4), np.log(s_total[0]) / n, s_total
+

@@ -7,48 +7,6 @@ import  numpy as np
 import  sys
 
 
-def n_conf(N, dx, dy, dz):
-    """
-    calculates the number of conformations  of ideal grid polymer given
-    number of bonds and displacements along the grid.
-    """
-    dx = abs(dx); dy = abs(dy); dz = abs(dz)
-
-
-    if ((N - dx - dy + dz) % 2 != 0) | ((N - dx - dy - dz) % 2 != 0):
-        return 0
-    else:
-
-        n_plus = int((N - dx - dy + dz) / 2)
-        n_minus = int((N - dx - dy - dz) / 2)
-
-        numerator = math.factorial(N)
-        res = 0.0
-        for x in range(n_minus + 1):
-            for y in range(n_minus - x + 1):
-                res += numerator / math.factorial(x) / math.factorial(x + dx) / math.factorial(y) / math.factorial(
-                    y + dy) / \
-                       math.factorial(n_plus - x - y) / math.factorial(n_minus - x - y)
-
-        return res
-
-
-
-def cache_n_conf(N_, dx, dy, dz):
-    """
-    caches the n_conf for each point on the grid given by dz, dy, dz
-    """
-    res = []
-    for n in range(N_):
-        for i in range(dx):
-            for j in range(dy):
-                for k in range(dz):
-                    res.append(n_conf(n + 1, i, j, k))
-                    # print(n+1, i, j, k, n_conf(n+1,i,j,k))
-    return np.array(res).reshape(N_, dx, dy, dz)  # .astype(int)
-    # return re
-
-
 
 def regrow(n, dx, dy, dz, res):
     """
