@@ -9,6 +9,8 @@ import  math
 import  logging
 from scipy.optimize import curve_fit
 
+import matplotlib.pyplot as plt
+
 RESULTS_FOLDER = 'results'
 
 

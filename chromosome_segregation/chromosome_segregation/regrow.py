@@ -5,7 +5,7 @@ Changing chain conformation
 import math
 import  numpy as np
 import  sys
-
+import consts
 
 
 def regrow(n, dx, dy, dz, res):
@@ -26,7 +26,7 @@ def regrow(n, dx, dy, dz, res):
                       ]
         counts = []
         for n_ in neighbours:
-            counts.append(caches[n_[0] - 1, abs(n_[1]), abs(n_[2]), abs(n_[3])])
+            counts.append(consts.caches[n_[0] - 1, abs(n_[1]), abs(n_[2]), abs(n_[3])])
 
         # normalising
         counts = [c / sum(counts) for c in counts]
@@ -85,18 +85,9 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             if neighbour[1:] in res:
                 n_coincide = 1
 
-                # calculating number of coordinate coincidence  for the  grown part of the coords
-            #             coords = res+[tuple(neighbour[1:]) , (0,0,0)] # adding a trial position
-            #             c = Counter(coords).values()
-
-            #             coords = np.array(res+[neighbour[1:] , [0,0,0]]) # adding a trial position
-            #             u, c = np.unique(coords, axis=0, return_counts=True)
-            # number of coincidential coords (NOT the number of pair-wise intersections)
-            #             n_coincide = sum([el for el in c if  el>1])/len(coords)
-            #             n_coincide = sum([comb(v,2) for v in c])/len(coords)
             all_coincidence.append(n_coincide)
             #             print(coords, n_coincide)
-            count = caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
+            count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
             counts.append(np.exp(-alpha * n_coincide) * count)
             tmp += count  # accumulating the denominator
         # print(count, np.exp(-alpha*n_coincide))

@@ -2,10 +2,10 @@
 module for  keeping simulation routines
 """
 
-from chromosome_segregation.chromosome_segregation.regrow import regrow, regrow_biased
+from regrow import regrow, regrow_biased
 from scipy.special import comb
 import  numpy as np
-
+import logging
 
 def URW(n, n_steps):
     """
@@ -20,7 +20,8 @@ def URW(n, n_steps):
     """
     intersections = []
     for i in range(n_steps):
-        if i % 10000 == 0: print(i / n_steps * 100, '%')
+        if i % 10000 == 0:
+            logging.info("passed %3.1f %%"  %(i/n_steps * 100))
         coords = regrow(n, 0, 0, 0, [])
         coords = np.array(coords).T.astype(float)
         #         print(coords, coords.shape, "\n")
@@ -66,8 +67,8 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
         indexes = list(set([ind - ind % grain for ind in range(min_overlaps, max_overlaps + 1) if ind not in exclude]))
 
     print('s size is: ', s.shape)
-    print('indexes', indexes)
-    print('max overlap %i, min_overlaps  %i' % (max_overlaps, min_overlaps))
+    logging.info('indexes: %s'%indexes)
+    logging.info("max overlap %i, min_overlaps  %i" %(max_overlaps, min_overlaps))
 
     ds = .1
 
@@ -82,7 +83,6 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
 
     while ds > ds_min:
         sweep_number += 1
-        print('sweeping', sweep_number)
         for i in range(sweep_length):
 
             #             coords_n = regrow(n, 0,0,0, [])
@@ -118,15 +118,16 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
         #         t = counts[counts>0]
         #     print(t)
         mean = sum(t) / len(t)
-        print(t, round(mean, 2), max(t), min(t))
+        print('sweep number',sweep_number, 'mean=',round(mean, 2), 'max=',max(t), 'min=',min(t), end='\r')
 
         #     print(max(t)/mean -1, 1- min(t)/mean )
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
-            print(counts)
+            # print(counts)
             counts = 0 * counts
-            print(repr(s))
+            # print(repr(s))
             collect_s.append(s.copy())
-            ds = ds / 2
-            print(ds)
+            ds = ds / 1.5
+            # print('')
+            logging.info("ds=%e, ds_min=%f, sweep number=%i"%(ds, ds_min, sweep_number))
 
     return collect_s, sweep_number
