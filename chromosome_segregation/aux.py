@@ -284,3 +284,39 @@ def calculate_saw_fraction(path):
     else:
         return round(1 / n, 4), np.log(s_total[0]) / n, s_total
 
+
+def prepare_entropy_plot(paths):
+    """
+    reads results directory and for each N calculates statistics for a plot
+    """
+    res = []
+    for folder in paths:
+        n = int(folder.split('/')[1])
+        reverse_n, specific_entropy, s = calcutate_saw_fraction(folder)
+        print(folder, n, reverse_n, specific_entropy)
+        res.append((reverse_n, specific_entropy))
+
+    # for each N get list of values
+    dict_ = {}
+    for k, v in sorted(res):
+        if k not in dict_:
+            dict_[k] = []
+        dict_[k].append(v)
+
+    # get statistics on the values
+    for k in dict_:
+        if len(dict_[k]) > 1:
+            dict_[k] = sum(dict_[k]) / len(dict_[k]), statistics.stdev(dict_[k])
+        else:
+            dict_[k] = sum(dict_[k]) / len(dict_[k]), 0
+
+    x = np.array(list(dict_.keys()))
+    y, errs = zip(*list(dict_.values()))
+
+    y = np.array(y)
+    errs = np.array(errs)
+
+    return x, y, errs
+
+
+

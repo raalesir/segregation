@@ -110,7 +110,7 @@ def run(n, n_steps, bins=None, counts=None):
     metrics['min_overlaps_right'] = int(min_overlaps)
     metrics['max_overlaps_right'] = int(max_overlaps)
 
-    ds_min = 10**-4#1*10 **-6
+    ds_min = 10**-2#1*10 **-6
     metrics['ds_min_right'] = ds_min
 
     flatness = 0.25
@@ -134,12 +134,12 @@ def run(n, n_steps, bins=None, counts=None):
     if n > 30:
         max_overlaps = np.argmax(np.array(counts) > 10 ** (-2))
         alpha = 1.5  # 2.0#1.7
-        ds_min = 1 * 10 ** -7  # 0.0000001
+        ds_min = 10 ** -7  # 0.0000001
         flatness = 0.3  # 0.1
     else:
         max_overlaps = np.argmax(np.array(counts)) + 5
         alpha = 0.0
-        ds_min = 10 ** -4  # 1 * 10 ** -8  # 0.0000001
+        ds_min = 10 ** -2  # 1 * 10 ** -8  # 0.0000001
         flatness = 0.05
 
     logging.info("running WL-left with max_overlaps=%i, ds_min=%e, alpha=%f, flatness=%3.2f"
@@ -186,6 +186,7 @@ def run_all(n, n_steps):
 
 
 
+
 if __name__ == "__main__":
 
     my_parser = argparse.ArgumentParser(description="""Calculating  the specific excess entropy for a ring grid
@@ -203,27 +204,43 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     # input_path = args.Path
 
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
-        handlers=[
-            logging.FileHandler(LOG_FILE),
-            logging.StreamHandler()
-        ]
-    )
+    # logging.basicConfig(
+    #     level=logging.INFO,
+    #     format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
+    #     handlers=[
+    #         logging.FileHandler(LOG_FILE),
+    #         logging.StreamHandler()
+    #     ]
+    # )
 
     ns = [10, 12]
     n_stepss = [100000, 100000]
-    logging.info("caching the number of confs... can take several minutes")
+    print("caching the number of confs... can take several minutes")
 
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
-    logging.info("done caching. The cache shape is %s" % str(consts.caches.shape))
+    print("done caching. The cache shape is %s" % str(consts.caches.shape))
 
     results  = {}
-    logging.info("looping number of beads")
+    print("looping number of beads")
     for n, n_steps in zip(ns, n_stepss):
+
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
+            handlers=[
+                logging.FileHandler(LOG_FILE),
+                logging.StreamHandler()
+            ]
+        )
+
+
+        logging.info("logging to: %s"%(LOG_FILE))
         logging.info('running simulation for number of beads %i, number of steps %i' %(n, n_steps))
         reverse_n, specific_excess_entropy, experiment_folder = run_all(n, n_steps)
+        logging.info("the specific excess entropy is: %f, reverse n is:%f "%(specific_excess_entropy, reverse_n))
         results[reverse_n] = specific_excess_entropy
         shutil.move(LOG_FILE, os.path.join(experiment_folder, LOG_FILE))
+        logging.shutdown()
     print(results)
+
+    # x, y, errs = prepare_entropy_plot(experiment_folders)
