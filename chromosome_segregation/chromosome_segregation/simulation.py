@@ -1,8 +1,11 @@
 """
 module for  keeping simulation routines
 """
-
-from regrow import regrow, regrow_biased
+try:
+    from regrow import regrow, regrow_biased
+except ImportError:
+    from chromosome_segregation.regrow import regrow_biased, regrow
+    
 from scipy.special import comb
 import  numpy as np
 import logging
@@ -66,7 +69,7 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
         s = np.zeros(max_overlaps + 1)
         indexes = list(set([ind - ind % grain for ind in range(min_overlaps, max_overlaps + 1) if ind not in exclude]))
 
-    print('s size is: ', s.shape)
+    logging.info('s size is: %s' %(s.shape))
     logging.info('indexes: %s'%indexes)
     logging.info("max overlap %i, min_overlaps  %i" %(max_overlaps, min_overlaps))
 
@@ -77,8 +80,6 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
     k_o = 0
     collect_s = []
     sweep_number = 0
-
-    #     indexes = [ind for ind in range(max_overlaps) if ind not in exclude]
 
 
     while ds > ds_min:
@@ -113,21 +114,13 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
         # print(o_)
 
         t = counts[indexes]
-        #         print(counts)
-
-        #         t = counts[counts>0]
-        #     print(t)
         mean = sum(t) / len(t)
         print('sweep number',sweep_number, 'mean=',round(mean, 2), 'max=',max(t), 'min=',min(t), end='\r')
 
-        #     print(max(t)/mean -1, 1- min(t)/mean )
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
-            # print(counts)
             counts = 0 * counts
-            # print(repr(s))
             collect_s.append(s.copy())
             ds = ds / 1.5
-            # print('')
             logging.info("ds=%e, ds_min=%f, sweep number=%i"%(ds, ds_min, sweep_number))
 
     return collect_s, sweep_number

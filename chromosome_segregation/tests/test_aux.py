@@ -2,16 +2,17 @@
     testing  routines  in aux
 """
 
+from chromosome_segregation import  aux
+
 import numpy as np
 
-try:
-    from sim.sim import aux
-except ModuleNotFoundError:
-    try:
-        from sim import aux
-    except:
-        from .sim  import  aux
-
+# try:
+#     from sim.sim import aux
+# except ModuleNotFoundError:
+#     try:
+#         from sim import aux
+#     except:
+#         from .sim  import  aux
 
 
 def test_cache_n_conf():

@@ -5,9 +5,9 @@
 # import pytest
 
 try:
-    from sim.sim import overlaps
-except ModuleNotFoundError:
-    from  sim import   overlaps
+    from chromosome_segregation.chromosome_segregation import overlaps
+except ImportError:
+    from  chromosome_segregation import   overlaps
 
 
 def test_n_conf():

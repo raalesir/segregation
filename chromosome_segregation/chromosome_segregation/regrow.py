@@ -5,8 +5,10 @@ Changing chain conformation
 import math
 import  numpy as np
 import  sys
-import consts
-
+try:
+    import consts
+except:
+    from chromosome_segregation import consts
 
 def regrow(n, dx, dy, dz, res):
     """

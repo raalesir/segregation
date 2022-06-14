@@ -1,15 +1,29 @@
 """Main module."""
 
-from  aux import  plot, glue_s, rescale_s, save_results, load_data,\
-    cache_n_conf, calculate_saw_fraction
+try:
+    from  aux import  plot, glue_s, rescale_s, save_results, load_data,\
+        cache_n_conf, calculate_saw_fraction
 
-from  simulation import WL, URW
-import  consts
+    from  simulation import WL, URW
+    import consts
+
+except:
+    from chromosome_segregation.aux import   plot, glue_s, rescale_s, save_results, load_data,\
+        cache_n_conf, calculate_saw_fraction
+
+    from chromosome_segregation.simulation import WL, URW
+
+
+
 
 import  logging
 import  time
 import  numpy as np
 import shutil, os
+import argparse
+from argparse import RawTextHelpFormatter
+
+
 
 LOG_FILE="log.log"
 
@@ -174,6 +188,21 @@ def run_all(n, n_steps):
 
 if __name__ == "__main__":
 
+    my_parser = argparse.ArgumentParser(description="""Calculating  the specific excess entropy for a ring grid
+polymer as a  function of a reciprocal number  of beads""", formatter_class=RawTextHelpFormatter)
+
+    # Add the arguments
+    # my_parser.add_argument('Path',
+    #                        metavar='path',
+    #                        type=str,
+    #                        help='the path to list')
+    #
+    # # Execute the parse_args() method
+    # args = my_parser.parse_args()
+    #
+    # input_path = args.Path
+
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
@@ -183,8 +212,8 @@ if __name__ == "__main__":
         ]
     )
 
-    ns = [12]
-    n_stepss = [100000]
+    ns = [10, 12]
+    n_stepss = [100000, 100000]
     logging.info("caching the number of confs... can take several minutes")
 
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
