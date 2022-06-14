@@ -1,2 +1,0 @@
-# segregation
-chromosome segregation
