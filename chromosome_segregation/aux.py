@@ -10,8 +10,60 @@ import  logging
 from scipy.optimize import curve_fit
 
 import matplotlib.pyplot as plt
+import  statistics
 
 RESULTS_FOLDER = 'results'
+
+
+
+
+def plot_specific_entropy(x,y,errs):
+    def func1(x, a, b, c):
+        #     return a * np.exp(-b * x)
+        #     return a*x +b
+        return a * x * np.log(x) + b * x + c
+
+    popt, pcov = curve_fit(func1, x, y)
+    print(popt)
+    xx = np.linspace(0.0001, 0.15, 100)
+    plt.rc('font', size=14)
+
+    plt.figure(figsize=(12, 8))
+    plt.plot(xx, func1(xx, *popt),
+             label=' fit to data: $f(x) = %1.4f [x\ln(x)] +%1.4f x %1.4f$' % (popt[0], popt[1], popt[2]))
+    plt.scatter(x, y, facecolor='red', edgecolor='black', s=100, label='simulation results')
+
+    plt.errorbar(x, y, yerr=errs, fmt=".", color='black', capsize=5)
+
+    plt.scatter(0, -0.2476, s=200, label='limit for $n\\to\infty$', marker='x', color='black')
+    plt.scatter(1 / 12., -0.31273, s=250, label='exact for n=12', marker='8', facecolor='none', edgecolor='black')
+    plt.scatter(1 / 10., -0.31907, s=250, label='exact for  n=10', marker='D', facecolor='none', edgecolor='black')
+    plt.scatter(1 / 8., -0.32539, s=250, label='exact for  n=8', marker='s', facecolor='none', edgecolor='black')
+
+    plt.grid()
+    plt.xlabel('1/N')
+    plt.ylabel('$\Delta S/N$')
+    plt.title("""Specific excess entropy $\Delta S/N$.  The limit value for scaling is -0.2476""")
+    plt.legend()
+    # plt.xticks(list(plt.xticks()[0])+ [.01])
+    plt.xticks(np.arange(0, 0.15, .01))
+    plt.xlim(-0.003, 0.15)
+
+    plt.savefig(os.path.join(RESULTS_FOLDER, 'specific_entropy.png'), )
+
+
+
+
+
+def get_result_subfolders():
+    lst = []
+    for root, subdir, files in os.walk(RESULTS_FOLDER):
+        if (len(subdir) >0):
+            for sd  in subdir:
+                if (sd.startswith('run')):
+                    lst.append(os.path.join(root, sd))
+    return lst
+
 
 
 def get_subfolder(path):
@@ -43,7 +95,7 @@ def get_subfolder(path):
 
 
 
-def save_results(n, s_left, s_right, s_total, bins, counts, metrics):
+def save_results(n, s_left, s_right, s_total, bins, counts, metrics, saw_fraction, fitted_s):
     """
     Given the number ``n`` -- the number of monomers  -- saves the data to ``results`` folder
 
@@ -74,8 +126,8 @@ def save_results(n, s_left, s_right, s_total, bins, counts, metrics):
 
     OUT_FOLDER = os.path.join(OUT_FOLDER, experiment_folder)
 
-    names = ['s_left.txt', 's_right.txt', 's_total.txt', 'bins.txt', 'counts.txt']
-    data = [s_left, s_right, s_total, bins, counts]
+    names = ['s_left.txt', 's_right.txt', 's_total.txt', 'bins.txt', 'counts.txt','fitted_s.txt', 'saw.txt']
+    data = [s_left, s_right, s_total, bins, counts, fitted_s, np.array((round(1/n, 4), saw_fraction))]
     save_dict = dict(zip(names, data))
 
     for item in save_dict:
@@ -228,29 +280,26 @@ def cache_n_conf(N_, dx, dy, dz):
 
 
 
-def calculate_saw_fraction(path):
+def calculate_saw_fraction(n, s_total):
     """
-    produces fraction of SAW for a given ``path`` where results of a single experiment  are stored. e.g 'results/10/run_1'.
-    The glued `s` can contain NANs, since `s_right` can be calculated not for  every overlap in order to speed up convergence.
-    The right-hand side tail looks like  a straight line, so we fit the right tail with a line and filling the missed data
-    (NANs) with the data after fitting a line.
+
+    :param n:
+    :type n:
+    :param s_total:
+    :type s_total:
+    :return:
+    :rtype:
     """
 
     def func(x, a, b):
         return a * x + b
 
-    logging.info("extracting `n` from the path")
-    n = int(path.split('/')[1])
-    logging.info("n=%i" %n)
-    logging.info('loading  saved results...')
-    s_left, s_right, s_total, bins, counts, metrics = load_data(path)
-    logging.info("done loading saved data")
-
-    #     print('sum of s_total', np.nansum(s_total), path)
-    first_index = np.nanargmax(np.isnan(s_total)) -1 # the  index before the  first  NAN in s_total
-    if first_index > 0: # it there are NaNs!
+    first_index = 0
+    if n > 20:
+        first_index = np.nanargmax(np.isnan(s_total)) - 1  # the  index before the  first  NAN in s_total
+    if first_index > 0:  # it there are NaNs!
         last_index = len(s_total)
-        logging.info('first  index to fit %i, last is  %i'%(first_index, last_index))
+        logging.info('first  index to fit %i, last is  %i' % (first_index, last_index))
         y_data = s_total[first_index:last_index]
         x_data = range(len(y_data))
         real_data_length = len(x_data)
@@ -285,6 +334,29 @@ def calculate_saw_fraction(path):
         return round(1 / n, 4), np.log(s_total[0]) / n, s_total
 
 
+
+def calculate_saw_fraction_all(path):
+    """
+    produces fraction of SAW for a given ``path`` where results of a single experiment  are stored. e.g 'results/10/run_1'.
+    The glued `s` can contain NANs, since `s_right` can be calculated not for  every overlap in order to speed up convergence.
+    The right-hand side tail looks like  a straight line, so we fit the right tail with a line and filling the missed data
+    (NANs) with the data after fitting a line.
+    """
+
+
+    logging.info("extracting `n` from the path")
+    n = int(path.split('/')[1])
+    logging.info("n=%i" %n)
+    logging.info('loading  saved results...')
+    s_left, s_right, s_total, bins, counts, metrics = load_data(path)
+    logging.info("done loading saved data")
+
+    #     print('sum of s_total', np.nansum(s_total), path)
+    reverse_n, saw_fraction, s = calculate_saw_fraction(n, s_total=s_total)
+
+    return  reverse_n, saw_fraction, s
+
+
 def prepare_entropy_plot(paths):
     """
     reads results directory and for each N calculates statistics for a plot
@@ -292,8 +364,17 @@ def prepare_entropy_plot(paths):
     res = []
     for folder in paths:
         n = int(folder.split('/')[1])
-        reverse_n, specific_entropy, s = calcutate_saw_fraction(folder)
-        print(folder, n, reverse_n, specific_entropy)
+        if os.path.isfile(os.path.join(folder, 'saw.txt')):
+            logging.info("open 'saw.txt' for reading reverse n and saw fraction")
+            reverse_n, specific_entropy = np.loadtxt(os.path.join(folder, 'saw.txt'))
+        else:
+            logging.info("saw.txt is missing. recalculating")
+            reverse_n, specific_entropy, s = calculate_saw_fraction_all(folder)
+            logging.info("saving to saw.txt")
+            np.savetxt(os.path.join(folder, 'saw.txt'), np.array((reverse_n, specific_entropy)))
+            logging.info("saved...")
+
+        logging.info("%s, %i, %4.3f, %f"%(folder, n, reverse_n, specific_entropy))
         res.append((reverse_n, specific_entropy))
 
     # for each N get list of values
