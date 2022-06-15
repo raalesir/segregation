@@ -221,8 +221,8 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     #     ]
     # )
 
-    ns = [26,26]
-    n_stepss = [200000,200000]
+    ns = [20]
+    n_stepss = [100000]
     print("caching the number of confs... can take several minutes")
 
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)

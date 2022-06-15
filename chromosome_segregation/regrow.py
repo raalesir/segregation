@@ -6,9 +6,9 @@ import math
 import  numpy as np
 import  sys
 try:
-    import consts
+    import consts, aux
 except:
-    from chromosome_segregation import consts
+    from chromosome_segregation import consts, aux
 
 def regrow(n, dx, dy, dz, res):
     """
@@ -86,15 +86,16 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             n_coincide = 0
             if neighbour[1:] in res:
                 n_coincide = 1
-
             all_coincidence.append(n_coincide)
+
+            # checking if outside the box
+            is_inside = aux.is_inside_box(*neighbour[1:])
+
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
-            counts.append(np.exp(-alpha * n_coincide) * count)
+            counts.append(np.exp(-alpha * n_coincide) * count * is_inside)
             tmp += count  # accumulating the denominator
-        # print(count, np.exp(-alpha*n_coincide))
 
-        #         print(10*'dd')
         # calculating W
         w = w * sum(counts) / tmp
         #         print(w)
@@ -108,16 +109,9 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             sys.exit()
         # selecting one of neigbours
         selected = np.argmax(counts_ > np.random.rand())
-        #         print(neighbours[selected])
         res.append(neighbours[selected][1:])
-        #         print(c)
-        #         print('res', res)
-        #         sel.append(selected)
 
-        #         nz.append(counts[selected])
-        #         print(all_coincidence[selected])
         k += all_coincidence[selected]
-        #         print(len(res), all_coincidence[selected])
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 # sys.exit()

@@ -12,7 +12,28 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import  statistics
 
-RESULTS_FOLDER = 'results'
+import consts
+
+RESULTS_FOLDER = consts.RESULTS_FOLDER
+
+
+
+def is_inside_box(x,y,z):
+    """
+    checks if a  point inside  the box
+    :param x:
+    :type x:
+    :param y:
+    :type y:
+    :param z:
+    :type z:
+    :return:
+    :rtype:
+    """
+    if (abs(x)<=consts.size_x/2) & (abs(y)  <= consts.size_y/2) & (z>=0) &  (z<=consts.size_z):
+        return 1
+    else:
+        return 0
 
 
 
