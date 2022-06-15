@@ -2,14 +2,16 @@
 
 try:
     from  aux import  plot, glue_s, rescale_s, save_results, load_data,\
-        cache_n_conf, calculate_saw_fraction
+        cache_n_conf, calculate_saw_fraction_all, prepare_entropy_plot, get_result_subfolders,plot_specific_entropy,\
+        calculate_saw_fraction
 
     from  simulation import WL, URW
     import consts
 
 except:
     from chromosome_segregation.aux import   plot, glue_s, rescale_s, save_results, load_data,\
-        cache_n_conf, calculate_saw_fraction
+        cache_n_conf, calculate_saw_fraction_all, prepare_entropy_plot, get_result_subfolders, plot_specific_entropy,\
+        calculate_saw_fraction
 
     from chromosome_segregation.simulation import WL, URW
 
@@ -88,6 +90,7 @@ def run(n, n_steps, bins=None, counts=None):
     exclude = ()
     if (n == 12): exclude = (23, 24, 26, 27, 28, 29)
     if (n == 10): exclude = (15, 17, 18, 19)
+    if  (n==8):  exclude =(10,11)
 
     metrics['grain_right'] = grain
     metrics['alpha_right'] = alpha
@@ -110,7 +113,7 @@ def run(n, n_steps, bins=None, counts=None):
     metrics['min_overlaps_right'] = int(min_overlaps)
     metrics['max_overlaps_right'] = int(max_overlaps)
 
-    ds_min = 10**-2#1*10 **-6
+    ds_min = 10 **-4
     metrics['ds_min_right'] = ds_min
 
     flatness = 0.25
@@ -134,12 +137,12 @@ def run(n, n_steps, bins=None, counts=None):
     if n > 30:
         max_overlaps = np.argmax(np.array(counts) > 10 ** (-2))
         alpha = 1.5  # 2.0#1.7
-        ds_min = 10 ** -7  # 0.0000001
-        flatness = 0.3  # 0.1
+        ds_min = 10**-5#10 ** -7  # 0.0000001
+        flatness = 0.25  # 0.1
     else:
         max_overlaps = np.argmax(np.array(counts)) + 5
         alpha = 0.0
-        ds_min = 10 ** -2  # 1 * 10 ** -8  # 0.0000001
+        ds_min = 10 ** -4  # 1 * 10 ** -8  # 0.0000001
         flatness = 0.05
 
     logging.info("running WL-left with max_overlaps=%i, ds_min=%e, alpha=%f, flatness=%3.2f"
@@ -174,15 +177,20 @@ def run_all(n, n_steps):
 
     logging.info("gluing left and right entropy with counts")
     total_s = glue_s(bins, counts, s_left[-1], s_right[-1])
+
+    logging.info("calculating SAW fraction")
+    reverse_n, saw_fraction, fitted_s = calculate_saw_fraction(n, total_s)
+
+
     logging.info("saving results")
-    experiment_folder = save_results(n, s_left, s_right, total_s, bins, counts, metrics)
+    experiment_folder = save_results(n, s_left, s_right, total_s, bins, counts, metrics, saw_fraction, fitted_s)
     logging.info("loading saved data for plotting and calculating #SAW")
     s_left, s_right, s_total, bins, counts, metrics = load_data(experiment_folder)
     logging.info('plotting')
     plot(bins, counts, total_s, metrics, save_plot_to=experiment_folder)
-    reverse_n_, specific_excess_entropy_, entropy = calculate_saw_fraction(experiment_folder)
+    # reverse_n_, specific_excess_entropy_, entropy = calculate_saw_fraction_all(experiment_folder)
 
-    return reverse_n_, specific_excess_entropy_, experiment_folder
+    return  experiment_folder
 
 
 
@@ -213,14 +221,13 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     #     ]
     # )
 
-    ns = [10, 12]
-    n_stepss = [100000, 100000]
+    ns = [26,26]
+    n_stepss = [200000,200000]
     print("caching the number of confs... can take several minutes")
 
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
     print("done caching. The cache shape is %s" % str(consts.caches.shape))
 
-    results  = {}
     print("looping number of beads")
     for n, n_steps in zip(ns, n_stepss):
 
@@ -236,11 +243,14 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
 
         logging.info("logging to: %s"%(LOG_FILE))
         logging.info('running simulation for number of beads %i, number of steps %i' %(n, n_steps))
-        reverse_n, specific_excess_entropy, experiment_folder = run_all(n, n_steps)
-        logging.info("the specific excess entropy is: %f, reverse n is:%f "%(specific_excess_entropy, reverse_n))
-        results[reverse_n] = specific_excess_entropy
+        experiment_folder = run_all(n, n_steps)
         shutil.move(LOG_FILE, os.path.join(experiment_folder, LOG_FILE))
         logging.shutdown()
-    print(results)
 
-    # x, y, errs = prepare_entropy_plot(experiment_folders)
+
+    subfolders = get_result_subfolders()
+    print(subfolders)
+    x, y, errs = prepare_entropy_plot(subfolders)
+    print(x,y,errs)
+    plot_specific_entropy(x,y,errs=errs)
+
