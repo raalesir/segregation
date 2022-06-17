@@ -2,9 +2,9 @@ caches = None
 # ds  = 0.1
 
 
-size_x = 5
-size_y = 5
-size_z = 5
+size_x = 50
+size_y = 50
+size_z = 50
 
 volume = (size_y+1) * (size_x+1) * (size_z+1)
 

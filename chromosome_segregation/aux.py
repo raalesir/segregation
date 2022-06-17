@@ -16,7 +16,7 @@ try:
     import consts
 except:
     from chromosome_segregation import consts
-    
+
 RESULTS_FOLDER = consts.RESULTS_FOLDER
 
 
