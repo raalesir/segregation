@@ -12,8 +12,11 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import  statistics
 
-import consts
-
+try:
+    import consts
+except:
+    from chromosome_segregation import consts
+    
 RESULTS_FOLDER = consts.RESULTS_FOLDER
 
 
