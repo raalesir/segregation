@@ -28,7 +28,14 @@ def regrow(n, dx, dy, dz, res):
                       ]
         counts = []
         for n_ in neighbours:
-            counts.append(consts.caches[n_[0] - 1, abs(n_[1]), abs(n_[2]), abs(n_[3])])
+
+            # checking if outside the box
+            is_inside = aux.is_inside_box(*n_[1:])
+
+            if is_inside ==1:
+                counts.append(consts.caches[n_[0] - 1, abs(n_[1]), abs(n_[2]), abs(n_[3])])
+            else:
+                counts.append(0)
 
         # normalising
         counts = [c / sum(counts) for c in counts]
@@ -49,11 +56,6 @@ def regrow(n, dx, dy, dz, res):
         selected = np.argmax(counts_ > np.random.rand())
         #         print(neighbours[selected])
         res.append(neighbours[selected][1:])
-        #         print(c)
-        #         print('res', res)
-        #         sel.append(selected)
-
-        #         nz.append(counts[selected])
 
 
         return regrow(*neighbours[selected], res)
@@ -90,11 +92,13 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
 
             # checking if outside the box
             is_inside = aux.is_inside_box(*neighbour[1:])
+            # if (is_inside ==0): print("OUTSiDE")
+
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
             counts.append(np.exp(-alpha * n_coincide) * count * is_inside)
-            tmp += count  # accumulating the denominator
+            tmp += count* is_inside  # accumulating the denominator
 
         # calculating W
         w = w * sum(counts) / tmp
@@ -108,9 +112,10 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             print('failed to grow')
             sys.exit()
         # selecting one of neigbours
-        selected = np.argmax(counts_ > np.random.rand())
+        selected = np.argmax(counts_ > np.random.random())
         res.append(neighbours[selected][1:])
-
+        if counts[selected] == 0:
+            print('SELECTED NOT POSSIBLE')
         k += all_coincidence[selected]
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
