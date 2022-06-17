@@ -30,7 +30,10 @@ def is_inside_box(x,y,z):
     :return:
     :rtype:
     """
-    if (abs(x)<=consts.size_x/2) & (abs(y)  <= consts.size_y/2) & (z>=0) &  (z<=consts.size_z):
+    if (abs(x)<=consts.size_x/2) & \
+            (abs(y)  <= consts.size_y/2) & \
+            (z>=0) &  \
+            (z<=consts.size_z):
         return 1
     else:
         return 0

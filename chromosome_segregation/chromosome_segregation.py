@@ -221,7 +221,7 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     #     ]
     # )
 
-    ns = [20]
+    ns = [30]
     n_stepss = [100000]
     print("caching the number of confs... can take several minutes")
 

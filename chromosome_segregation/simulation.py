@@ -3,6 +3,7 @@ module for  keeping simulation routines
 """
 try:
     from regrow import regrow, regrow_biased
+    import  consts
 except ImportError:
     from chromosome_segregation.regrow import regrow_biased, regrow
 
@@ -26,8 +27,10 @@ def URW(n, n_steps):
     for i in range(n_steps):
         if i % 10000 == 0:
             logging.info("passed %3.1f %%"  %(i/n_steps * 100))
-        coords = regrow(n, 0, 0, 0, [])
-        coords = np.array(coords).T.astype(float)
+        # coords = regrow(n, 0, 0, 0, [])
+        coords, _, _ = regrow_biased(n, 0, 0, 0, [], w=1, alpha=0.0, k=0)
+
+        coords = np.array(coords).astype(float)
         #         print(coords, coords.shape, "\n")
         #         sys.exit()
         #     scatter1.x = lines1.x = coords[0,:]
@@ -39,9 +42,11 @@ def URW(n, n_steps):
         #             print(coords, "\n")
         #             sys.exit()
         #     print(coords.T)
-        u, c = np.unique(coords.T, axis=0, return_counts=True)
+        u, c = np.unique(coords, axis=0, return_counts=True)
         #     print(u,c)
         intersections.append(sum([comb(v, 2) for v in c]))
+
+
 
     bins, counts_ = np.unique(intersections, return_counts=True)
     counts_ = [c / sum(counts_) for c in counts_]
@@ -91,6 +96,7 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
             coords_n, w_n, k_n = regrow_biased(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
 
             coords_n = np.array(coords_n)
+
             u, c = np.unique(coords_n, axis=0, return_counts=True)
             #             c = Counter(coords_n).values()
             n_ = int(sum([comb(v, 2) for v in c]))
@@ -99,13 +105,13 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
 
             if (n_ > max_overlaps) and (min_overlaps > 0):
                 n_ = max_overlaps + 1
-                if np.random.rand() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
+                if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
                     w_o = w_n
                     k_o = k_n
                     o_ = n_
             elif (n_ <= max_overlaps) and (n_ >= min_overlaps):
                 n_ = n_ - n_ % grain
-                if np.random.rand() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
+                if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
                     w_o = w_n
                     k_o = k_n
                     o_ = n_
@@ -117,6 +123,7 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
         t = counts[indexes]
         mean = sum(t) / len(t)
         print('sweep number',sweep_number, 'mean=',round(mean, 2), 'max=',max(t), 'min=',min(t), end='\r')
+        # print(t, end='\r')
 
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
             counts = 0 * counts
