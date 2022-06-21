@@ -2,9 +2,9 @@ caches = None
 # ds  = 0.1
 
 
-size_x = 10
-size_y = 10
-size_z = 10
+size_x = 14
+size_y = 14
+size_z = 14
 
 RUN_FREE = False
 RUN_HALFSPACE = True
