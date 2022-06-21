@@ -248,13 +248,13 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
         logging.shutdown()
 
 
-    subfolders = get_result_subfolders(path='results')
+    subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_FREE)
     print(subfolders)
     x, y, errs = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
     plot_specific_entropy(x,y,errs=errs)
 
-    subfolders = get_result_subfolders(path='results_box50_50_50')
+    subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_HALFSPACE)
     print(subfolders)
     x_half, y_half, errs_half = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
