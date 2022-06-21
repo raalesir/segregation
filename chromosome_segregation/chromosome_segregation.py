@@ -3,7 +3,7 @@
 try:
     from  aux import  plot, glue_s, rescale_s, save_results, load_data,\
         cache_n_conf, calculate_saw_fraction_all, prepare_entropy_plot, get_result_subfolders,plot_specific_entropy,\
-        calculate_saw_fraction
+        calculate_saw_fraction,  plot_specific_entropy_comparison
 
     from  simulation import WL, URW
     import consts
@@ -11,7 +11,7 @@ try:
 except:
     from chromosome_segregation.aux import   plot, glue_s, rescale_s, save_results, load_data,\
         cache_n_conf, calculate_saw_fraction_all, prepare_entropy_plot, get_result_subfolders, plot_specific_entropy,\
-        calculate_saw_fraction
+        calculate_saw_fraction, plot_specific_entropy_comparison
 
     from chromosome_segregation.simulation import WL, URW
 
@@ -248,9 +248,21 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
         logging.shutdown()
 
 
-    subfolders = get_result_subfolders()
+    subfolders = get_result_subfolders(path='results')
     print(subfolders)
     x, y, errs = prepare_entropy_plot(subfolders)
-    print(x,y,errs)
+    # print(x,y,errs)
     plot_specific_entropy(x,y,errs=errs)
+
+    subfolders = get_result_subfolders(path='results_box50_50_50')
+    print(subfolders)
+    x_half, y_half, errs_half = prepare_entropy_plot(subfolders)
+    # print(x,y,errs)
+    plot_specific_entropy(x_half,y_half,errs=errs)
+
+    plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half)
+
+
+
+
 

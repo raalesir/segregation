@@ -42,9 +42,50 @@ def is_inside_box(x,y,z):
         return 0
 
 
+def plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, save_to='.'):
+    def func1(x, a, b, c):
+        #     return a * np.exp(-b * x)
+        #     return a*x +b
+        return a * x * np.log(x) + b * x + c
+
+    popt, pcov = curve_fit(func1, x, y)
+    print(popt)
+    xx = np.linspace(0.0001, 0.15, 100)
+    plt.rc('font', size=12)
+
+    plt.figure(figsize=(16, 10))
+
+    plt.plot(xx, func1(xx, *popt),
+             label=' fit to data: $f(x) = %1.4f [x\ln(x)] +%1.4f x %1.4f$' % (popt[0], popt[1], popt[2]))
+    plt.scatter(x, y, facecolor='red', edgecolor='black', s=100, label='simulation results')
+    plt.errorbar(x, y, yerr=errs, fmt=".", color='black', capsize=5)
+
+    popt, pcov = curve_fit(func1, x_half, y_half)
+    plt.plot(xx, func1(xx, *popt), linestyle='-.', label=' fit for half-space')
+    plt.scatter(x_half, y_half, facecolor='blue', alpha=0.5, edgecolor='black', s=100,
+                label='simulation results for half-space')
+    plt.errorbar(x_half, y_half, yerr=errs_half, fmt=".", color='black', capsize=5)
+
+    plt.scatter(0, -0.2476, s=200, label='limit for $n\\to\infty$', marker='X', color='black')
+    plt.scatter(1 / 12., -0.31273, s=250, label='exact for n=12', marker='8', facecolor='none', edgecolor='black')
+    plt.scatter(1 / 10., -0.31907, s=250, label='exact for  n=10', marker='D', facecolor='none', edgecolor='black')
+    plt.scatter(1 / 8., -0.32539, s=250, label='exact for  n=8', marker='s', facecolor='none', edgecolor='black')
+
+    plt.grid()
+    plt.xlabel('1/N')
+    plt.ylabel('$\Delta S/N$')
+    plt.title("""Specific excess entropy $\Delta S/N$ for free polymer and a polymer confined in half-space.
+    The limit value for scaling is -0.2476""")
+    plt.legend()
+    # plt.xticks(list(plt.xticks()[0])+ [.01])
+    plt.xticks(np.arange(0, 0.15, .01))
+    plt.xlim(-0.003, 0.15)
+
+    plt.savefig(os.path.join(save_to, 'specific_entropy_comparison.png'), )
 
 
-def plot_specific_entropy(x,y,errs):
+
+def plot_specific_entropy(x,y,errs, save_to=RESULTS_FOLDER):
     def func1(x, a, b, c):
         #     return a * np.exp(-b * x)
         #     return a*x +b
@@ -76,15 +117,15 @@ def plot_specific_entropy(x,y,errs):
     plt.xticks(np.arange(0, 0.15, .01))
     plt.xlim(-0.003, 0.15)
 
-    plt.savefig(os.path.join(RESULTS_FOLDER, 'specific_entropy.png'), )
+    plt.savefig(os.path.join(save_to, 'specific_entropy.png'), )
 
 
 
 
 
-def get_result_subfolders():
+def get_result_subfolders(path=RESULTS_FOLDER):
     lst = []
-    for root, subdir, files in os.walk(RESULTS_FOLDER):
+    for root, subdir, files in os.walk(path):
         if (len(subdir) >0):
             for sd  in subdir:
                 if (sd.startswith('run')):
