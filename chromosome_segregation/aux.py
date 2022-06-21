@@ -33,13 +33,22 @@ def is_inside_box(x,y,z):
     :return:
     :rtype:
     """
-    if (abs(x)<=consts.size_x/2) & \
-            (abs(y)  <= consts.size_y/2) & \
-            (z>=0) &  \
-            (z<=consts.size_z):
-        return 1
+
+    if consts.RUN_HALFSPACE:
+        if (abs(x)<=consts.size_x/2) & \
+                (abs(y)  <= consts.size_y/2) & \
+                (z <=consts.size_z)  &\
+                (z>=0):
+            return 1
+        else:
+            return 0
     else:
-        return 0
+        if (abs(x) <= consts.size_x / 2) & \
+                (abs(y) <= consts.size_y / 2) & \
+                (abs(z) <= consts.size_z // 2):
+            return 1
+        else:
+            return 0
 
 
 def plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, save_to='.'):
