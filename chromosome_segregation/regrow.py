@@ -89,7 +89,8 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             # Lets do the following: a trial coordinate can bring 0 or 1 as an additional contribution
             # to the number of coordinate coinsidence.
             n_coincide = 0
-            if neighbour[1:] in res:
+            if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
+
                 n_coincide = 1
             all_coincidence.append(n_coincide)
 
