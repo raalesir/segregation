@@ -221,8 +221,8 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     #     ]
     # )
 
-    ns = [30]
-    n_stepss = [100000]
+    ns = [10,10]
+    n_stepss = [50000, 50000]
     print("caching the number of confs... can take several minutes")
 
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
@@ -258,10 +258,17 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     print(subfolders)
     x_half, y_half, errs_half = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
-    plot_specific_entropy(x_half,y_half,errs=errs)
+    plot_specific_entropy(x_half,y_half,errs=errs_half)
 
-    plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half)
+    subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_BOX)
+    print(subfolders)
+    x_box, y_box, errs_box = prepare_entropy_plot(subfolders)
+    # print(x,y,errs)
+    plot_specific_entropy(x_box, y_box, errs=errs_box)
 
+
+    plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, fname='specific_entropy_free_half_comparison.png')
+    plot_specific_entropy_comparison(x, y, errs, x_box, y_box, errs_box,fname='specific_entropy_free_box_comparison.png')
 
 
 

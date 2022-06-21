@@ -34,7 +34,9 @@ def is_inside_box(x,y,z):
     :rtype:
     """
 
-    if consts.RUN_HALFSPACE:
+    if consts.RUN_FREE:
+        return  1
+    elif consts.RUN_HALFSPACE:
         if (abs(x)<=consts.size_x/2) & \
                 (abs(y)  <= consts.size_y/2) & \
                 (z <=consts.size_z)  &\
@@ -45,13 +47,13 @@ def is_inside_box(x,y,z):
     else:
         if (abs(x) <= consts.size_x / 2) & \
                 (abs(y) <= consts.size_y / 2) & \
-                (abs(z) <= consts.size_z // 2):
+                (abs(z) <= consts.size_z / 2):
             return 1
         else:
             return 0
 
 
-def plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, save_to='.'):
+def plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, save_to='.', fname='tmp.png'):
     def func1(x, a, b, c):
         #     return a * np.exp(-b * x)
         #     return a*x +b
@@ -90,7 +92,7 @@ def plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, save
     plt.xticks(np.arange(0, 0.15, .01))
     plt.xlim(-0.003, 0.15)
 
-    plt.savefig(os.path.join(save_to, 'specific_entropy_comparison.png'), )
+    plt.savefig(os.path.join(save_to, fname), )
 
 
 

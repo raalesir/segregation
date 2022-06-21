@@ -7,7 +7,7 @@ size_y = 14
 size_z = 14
 
 RUN_FREE = False
-RUN_HALFSPACE = True
+RUN_HALFSPACE = False
 
 volume = (size_y+1) * (size_x+1) * (size_z+1)
 

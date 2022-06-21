@@ -32,10 +32,8 @@ def regrow(n, dx, dy, dz, res):
         for n_ in neighbours:
 
             # checking if outside the box
-            if consts.RUN_FREE:
-                is_inside = 1
-            else:
-                is_inside = aux.is_inside_box(*n_[1:])
+
+            is_inside = aux.is_inside_box(*n_[1:])
 
             if is_inside == 1:
                 counts.append(consts.caches[n_[0] - 1, abs(n_[1]), abs(n_[2]), abs(n_[3])])
@@ -95,10 +93,7 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             all_coincidence.append(n_coincide)
 
             # checking if outside the box
-            if consts.RUN_FREE:
-                is_inside = 1
-            else:
-                is_inside = aux.is_inside_box(*neighbour[1:])
+            is_inside = aux.is_inside_box(*neighbour[1:])
             # if (is_inside ==0): print("OUTSiDE")
 
 
@@ -153,10 +148,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
                 n_coincide = 0
             all_coincidence.append(n_coincide)
             # checking if outside the box
-            if consts.RUN_FREE:
-                is_inside = 1
-            else:
-                is_inside = aux.is_inside_box(*neighbour[1:])
+            is_inside = aux.is_inside_box(*neighbour[1:])
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
