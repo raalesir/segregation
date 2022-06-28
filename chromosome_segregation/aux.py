@@ -11,6 +11,7 @@ from scipy.optimize import curve_fit
 
 import matplotlib.pyplot as plt
 import  statistics
+from statistics import  Counter
 
 try:
     import consts
@@ -19,6 +20,16 @@ except:
 
 RESULTS_FOLDER = consts.RESULTS_FOLDER
 
+ln_fact_cache = []
+
+def list_to_arr(boxes):
+    items = Counter(boxes).items()
+#     keys = Counter(boxes).keys()
+    arr = np.zeros(30)
+    for item in Counter(boxes).items():
+#     print(item)
+        arr[item[0]] = item[1]
+    return arr/np.sum(arr)
 
 
 def is_inside_box(x,y,z):
@@ -321,6 +332,7 @@ def n_conf(N, dx, dy, dz):
     calculates the number of conformations  of ideal grid polymer given
     number of bonds and displacements along the grid.
     """
+
     dx = abs(dx); dy = abs(dy); dz = abs(dz)
 
 
@@ -342,17 +354,66 @@ def n_conf(N, dx, dy, dz):
         return res
 
 
+def ln_fact(x):
+
+        # return sum([math.log(el) for el in range(1, x)])
+        return .5*np.log(2*np.pi*x)+ x*(np.log(x)-1)
+
+def cache_ln_factorial(n):
+    """
+    caching factorials
+    :param n:
+    :type n:
+    :return:
+    :rtype:
+    """
+    return  [ln_fact(el) for el in range(0,n+1)]
+
+def n_conf_large(N, dx, dy, dz):
+    """
+    calculates the number of conformations  of ideal grid polymer given
+    number of bonds and displacements along the grid.
+    """
+
+
+    dx = abs(dx); dy = abs(dy); dz = abs(dz)
+
+
+    if ((N - dx - dy + dz) % 2 != 0) | ((N - dx - dy - dz) % 2 != 0):
+        return 0
+    else:
+
+        n_plus = int((N - dx - dy + dz) / 2)
+        n_minus = int((N - dx - dy - dz) / 2)
+
+        numerator = ln_fact_cache[N]
+        res = 0.0
+        for x in range(n_minus + 1):
+            for y in range(n_minus - x + 1):
+                res += np.exp(
+                    numerator -  ln_fact_cache[x]- ln_fact_cache[x + dx] - ln_fact_cache[y] - ln_fact_cache[y + dy] - \
+                    ln_fact_cache[n_plus - x - y] - ln_fact_cache[n_minus - x - y]
+                )
+
+        return res
+
 
 def cache_n_conf(N_, dx, dy, dz):
     """
     caches the n_conf for each point on the grid given by dz, dy, dz
     """
     res = []
+    global ln_fact_cache
+
+    ln_fact_cache = cache_ln_factorial(N_)
+
     for n in range(N_):
         for i in range(dx):
             for j in range(dy):
                 for k in range(dz):
-                    res.append(n_conf(n + 1, i, j, k))
+                    # res.append(n_conf(n + 1, i, j, k))
+                    res.append(n_conf_large(n + 1, i, j, k))
+        print('current %i out of %i'%(n, N_))
                     # print(n+1, i, j, k, n_conf(n+1,i,j,k))
     return np.array(res).reshape(N_, dx, dy, dz)  # .astype(int)
     # return re
