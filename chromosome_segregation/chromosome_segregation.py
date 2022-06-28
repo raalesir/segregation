@@ -228,43 +228,43 @@ polymer as a  function of a reciprocal number  of beads""", formatter_class=RawT
     consts.caches = cache_n_conf(N_=max(ns), dx=30, dy=30 , dz=30)
     print("done caching. The cache shape is %s" % str(consts.caches.shape))
 
-    print("looping number of beads")
-    for n, n_steps in zip(ns, n_stepss):
-
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
-            handlers=[
-                logging.FileHandler(LOG_FILE),
-                logging.StreamHandler()
-            ]
-        )
-
-
-        logging.info("logging to: %s"%(LOG_FILE))
-        logging.info('running simulation for number of beads %i, number of steps %i' %(n, n_steps))
-        experiment_folder = run_all(n, n_steps)
-        shutil.move(LOG_FILE, os.path.join(experiment_folder, LOG_FILE))
-        logging.shutdown()
+    # print("looping number of beads")
+    # for n, n_steps in zip(ns, n_stepss):
+    #
+    #     logging.basicConfig(
+    #         level=logging.INFO,
+    #         format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
+    #         handlers=[
+    #             logging.FileHandler(LOG_FILE),
+    #             logging.StreamHandler()
+    #         ]
+    #     )
+    #
+    #
+    #     logging.info("logging to: %s"%(LOG_FILE))
+    #     logging.info('running simulation for number of beads %i, number of steps %i' %(n, n_steps))
+    #     experiment_folder = run_all(n, n_steps)
+    #     shutil.move(LOG_FILE, os.path.join(experiment_folder, LOG_FILE))
+    #     logging.shutdown()
 
 
     subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_FREE)
     print(subfolders)
     x, y, errs = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
-    plot_specific_entropy(x,y,errs=errs)
+    plot_specific_entropy(x,y,errs=errs, save_to=consts.RESULTS_FOLDER_FREE)
 
     subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_HALFSPACE)
     print(subfolders)
     x_half, y_half, errs_half = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
-    plot_specific_entropy(x_half,y_half,errs=errs_half)
+    plot_specific_entropy(x_half,y_half,errs=errs_half, save_to=consts.RESULTS_FOLDER_HALFSPACE)
 
     subfolders = get_result_subfolders(path=consts.RESULTS_FOLDER_BOX)
     print(subfolders)
     x_box, y_box, errs_box = prepare_entropy_plot(subfolders)
     # print(x,y,errs)
-    plot_specific_entropy(x_box, y_box, errs=errs_box)
+    plot_specific_entropy(x_box, y_box, errs=errs_box, save_to=consts.RESULTS_FOLDER_BOX)
 
 
     plot_specific_entropy_comparison(x, y, errs, x_half, y_half, errs_half, fname='specific_entropy_free_half_comparison.png')
