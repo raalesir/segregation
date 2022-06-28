@@ -4,8 +4,11 @@ module for  keeping simulation routines
 try:
     from regrow import regrow, regrow_biased, regrow_saw
     import  consts
+    import  aux
 except ImportError:
     from chromosome_segregation.regrow import regrow_biased, regrow, regrow_saw
+    # import  aux
+
 
 from scipy.special import comb
 import  numpy as np
@@ -69,7 +72,7 @@ def URW_saw(n, n_steps, box):
     failed_to_grow = 0
     minx = miny = minz = maxx = maxy = maxz = 0
 
-    for i in range(1,n_steps//100):
+    for i in range(1,n_steps//50):
         if i % 1000 == 0:
             print("passed %3.1f %%, failed to grow: %3.1f%%"  %(i/n_steps * 100, failed_to_grow/i*100))
         # coords = regrow(n, 0, 0, 0, [])
@@ -124,9 +127,14 @@ def URW_saw(n, n_steps, box):
     # print("box=%s, scale=%i"%(box, scale))
     size_boxes = []
 
-    sx = list(range(a-max(box), a + max_size+1 ))#scale+1))
-    sy = list(range(b-max(box), b+max_size+1)) #scale+1))
-    sz = list(range(c-max(box), c + max_size+1 ))#scale+1))
+    sx = list(range(a-max(box), a + max_size+2 ))#scale+1))
+    sy = list(range(b-max(box), b+max_size+2)) #scale+1))
+    sz = list(range(c-max(box), c + max_size+2 ))#scale+1))
+    #
+    # sx = list(range(0, a + max_size+2))
+    # sy = list(range(b-a, len(sx)-b+a))
+    # sz = list(range(c-a, len(sx)-c+a))
+
     print(sx)
     print(sy)
     print(sz)
@@ -143,9 +151,12 @@ def URW_saw(n, n_steps, box):
         else:
             coords = np.array(coords)#.astype(float)
 
-            extreme_x = max(abs(min(coords[:, 0])), max(coords[:, 0]))
-            extreme_y = max(abs(min(coords[:, 1])), max(coords[:, 1]))
-            extreme_z = max(abs(min(coords[:, 2])), max(coords[:, 2]))
+            # extreme_x = max(abs(min(coords[:, 0])), max(coords[:, 0]))
+            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) +1)//2 # we need halv since box=(a,b,c) are halves  as well
+            # extreme_y = max(abs(min(coords[:, 1])), max(coords[:, 1]))
+            extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) +1)//2
+            # extreme_z = max(abs(min(coords[:, 2])), max(coords[:, 2]))
+            extreme_z = (max(coords[:, 2]) - min(coords[:, 2]) +1)//2
 
             box_x = sx.index(extreme_x) # extreme_x - extreme_x % dx) / dx
             box_y = sy.index(extreme_y) #(extreme_y - extreme_y % dy) / dy
@@ -157,7 +168,9 @@ def URW_saw(n, n_steps, box):
     # bins, counts_ = np.unique(intersections, return_counts=True)
     # counts_ = [c / sum(counts_) for c in counts_]
 
-    return size_boxes
+    # array = aux.list_to_arr(size_boxes+)
+
+    return [el + sx[0] for el in size_boxes] #shifting so ....
 
 
 
