@@ -48,7 +48,7 @@ def plot(total_results):
         boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
         for i in range(len(boxes)):
             n = get_n(boxes[i], density)
-            x.append(1 - n / get_n(boxes[0]))
+            x.append(1 - n / get_n(boxes[0], density))
             #         x.append(n)
             specific_free_energy = f(1 / n, a=0.375, b=.1347, c=-.2459)
             n_conformations_total = overlaps.Overlap(n).n_conformations
