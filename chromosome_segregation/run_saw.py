@@ -31,7 +31,7 @@ def f(x, a,b,c):
     return a*x*np.log(x) +  b*x +c
 
 
-def plot():
+def plot(total_results):
     plt.figure(figsize=(12, 8))
     # thickness=3
 
@@ -86,7 +86,7 @@ def run(density, n_boxes, thicknesses):
 
             total_results.append(results)
 
-        plot()
+        plot(total_results)
 
 
 if __name__ == "__main__":
