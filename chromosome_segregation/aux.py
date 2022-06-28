@@ -356,8 +356,11 @@ def n_conf(N, dx, dy, dz):
 
 def ln_fact(x):
 
+        if x <= 1 :
+            return  0
+        else:
         # return sum([math.log(el) for el in range(1, x)])
-        return .5*np.log(2*np.pi*x)+ x*(np.log(x)-1)
+            return .5*np.log(2*np.pi*x)+ x*(np.log(x)-1)
 
 def cache_ln_factorial(n):
     """

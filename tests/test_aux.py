@@ -22,7 +22,7 @@ def test_cache_n_conf():
           [[1., 0.],
            [0., 0.]]]]
     )
-    res2 = aux.cache_n_conf(1, 2, 2, 2)
+    res2 = np.round(aux.cache_n_conf(1, 2, 2, 2))
     assert  np.array_equal(res1, res2)==True
 
 
@@ -35,7 +35,7 @@ def test_cache_n_conf2():
           [2, 0]]]
     )
 
-    res2 = aux.cache_n_conf(10, 2, 2, 2)[1, :, :, :]
+    res2 = np.round(aux.cache_n_conf(10, 2, 2, 2)[1, :, :, :])
 
     assert np.array_equal(res1, res2) ==True
 
