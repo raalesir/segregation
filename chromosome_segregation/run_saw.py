@@ -1,11 +1,18 @@
 import  numpy as np
 
-from  chromosome_segregation.simulation import URW_saw
-from chromosome_segregation.aux import cache_n_conf
 
-from chromosome_segregation  import overlaps
+try:
+    from  chromosome_segregation.simulation import URW_saw
+    from chromosome_segregation.aux import cache_n_conf
 
-from  chromosome_segregation import  consts
+    from chromosome_segregation  import overlaps
+
+    from  chromosome_segregation import  consts
+except:
+    from simulation import URW_saw
+    from aux import cache_n_conf
+    import overlaps
+    import consts
 
 import  matplotlib.pyplot as plt
 
