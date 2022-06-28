@@ -148,7 +148,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
                 n_coincide = 0
             all_coincidence.append(n_coincide)
             # checking if outside the box
-            is_inside = aux.is_inside_box(*neighbour[1:])
+            is_inside = 1#aux.is_inside_box(*neighbour[1:])
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
