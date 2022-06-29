@@ -327,6 +327,27 @@ def glue_s(bins, counts, s_left, s_right):
     return total_s
 
 
+def get_grow_caches(fname, params):
+    if os.path.isfile(fname):
+        d = np.loadtxt(fname)
+#         d = np.load(fname)
+        try:
+            d = d.reshape(params)
+        except: pass
+        if d.shape < params:
+            print(params)
+            d = cache_n_conf(*params)
+            np.savetxt(fname, d.ravel())
+#             np.save(fname, d)
+    else:
+        d = cache_n_conf(*params)
+        np.savetxt(fname, d.ravel())
+#         np.save(fname, d)
+
+
+    return d
+
+
 def n_conf(N, dx, dy, dz):
     """
     calculates the number of conformations  of ideal grid polymer given

@@ -3,14 +3,14 @@ import  numpy as np
 
 try:
     from  chromosome_segregation.simulation import URW_saw
-    from chromosome_segregation.aux import cache_n_conf
+    from chromosome_segregation.aux import cache_n_conf, get_grow_caches
 
     from chromosome_segregation  import overlaps
 
     from  chromosome_segregation import  consts
 except:
     from simulation import URW_saw
-    from aux import cache_n_conf
+    from aux import cache_n_conf, get_grow_caches
     import overlaps
     import consts
 
@@ -73,7 +73,10 @@ def run(density, n_boxes, thicknesses):
         max_n = get_n([n_boxes, thicknesses[-1], thicknesses[-1]], density)
         print('max_n=%i' % (max_n))
 
-        consts.caches = cache_n_conf(N_=max_n + 1, dx=20, dy=20, dz=20)
+
+        #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
+        consts.caches = get_grow_caches(fname='grow_caches.txt.gz',
+                params=(max_n+1, 25,25,25))
 
         total_results = []
         for thickness in thicknesses:
@@ -99,7 +102,7 @@ def run(density, n_boxes, thicknesses):
 if __name__ == "__main__":
 
     density = 0.3
-    n_boxes = 3
+    n_boxes = 7
     thicknesses = list(range(1, 4))
 
     run(density, n_boxes, thicknesses)
