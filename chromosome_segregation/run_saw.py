@@ -19,6 +19,8 @@ import  matplotlib.pyplot as plt
 from statistics import Counter
 
 
+import  logging
+
 def get_n(box, density):
     t = density*box[0]*box[1]*box[2]
     return  int(t - t%2)
@@ -42,7 +44,7 @@ def plot(total_results):
     plt.figure(figsize=(12, 8))
     # thickness=3
 
-    for result, thickness in zip(total_results, (1, 2, 3)):
+    for result, thickness in zip(total_results, (2, 3, 4)):
         x = []
         y = []
         boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
@@ -70,18 +72,21 @@ def plot(total_results):
 
 def run(density, n_boxes, thicknesses):
 
+        logging.info("calculating maximal number of monomers...")
         max_n = get_n([n_boxes, thicknesses[-1], thicknesses[-1]], density)
-        print('max_n=%i' % (max_n))
+        logging.info('max_n=%i' % (max_n))
 
 
         #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
+        logging.info('getting cached OR calculating from the scratch..')
         consts.caches = get_grow_caches(fname='grow_caches.txt.gz',
                 params=(max_n+1, 25,25,25))
-
+        logging.info('done calculating n,dx,dy,dz array')
         total_results = []
         for thickness in thicknesses:
             boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
-            print('boxes: %s' % boxes)
+            logging.info('boxes: %s for thickness %i' % (boxes, thickness))
+
             nsteps = np.linspace(20000 * thickness, 200000, len(boxes))
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
@@ -104,6 +109,7 @@ if __name__ == "__main__":
     density = 0.6
     n_boxes = 7
     thicknesses = list(range(2, 5))
+    logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=%s" %(density, n_boxes, thicknesses))
 
     run(density, n_boxes, thicknesses)
 
