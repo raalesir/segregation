@@ -40,11 +40,12 @@ def f(x, a,b,c):
     return a*x*np.log(x) +  b*x +c
 
 
-def plot(total_results):
+def plot(total_results, thicknesses):
     plt.figure(figsize=(12, 8))
     # thickness=3
 
-    for result, thickness in zip(total_results, (2, 3, 4)):
+
+    for result, thickness in zip(total_results, thicknesses):
         x = []
         y = []
         boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
@@ -101,14 +102,15 @@ def run(density, n_boxes, thicknesses):
 
             total_results.append(results)
 
-        plot(total_results)
+        plot(total_results, thicknesses)
 
 
 if __name__ == "__main__":
 
-    density = 0.6
+    density = 0.5
     n_boxes = 7
-    thicknesses = list(range(2, 5))
+
+    thicknesses = list(range(2, 4))
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=%s" %(density, n_boxes, thicknesses))
 
     run(density, n_boxes, thicknesses)
