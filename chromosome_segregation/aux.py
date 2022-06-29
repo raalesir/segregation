@@ -4,6 +4,7 @@ Helpers
 import  os
 import  json
 import  numpy as np
+import gzip
 
 import  math
 import  logging
@@ -329,24 +330,31 @@ def glue_s(bins, counts, s_left, s_right):
 
 def get_grow_caches(fname, params):
     if os.path.isfile(fname):
+        with gzip.open(fname) as  f:
+            header = f.readline().decode("utf-8")[2:-1]
+#             print('raw header', header)
+            header = tuple([int(el) for el in header.split(',')])
+#             print('header', header)
         d = np.loadtxt(fname)
 #         d = np.load(fname)
         try:
-            d = d.reshape(params)
+            d = d.reshape(header)
+#             print(d.shape, 'fff')
+
         except: pass
         if d.shape < params:
-            print(params)
+#             print(params)
             d = cache_n_conf(*params)
-            np.savetxt(fname, d.ravel())
+            np.savetxt(fname, d.ravel(), header=','.join([str(el) for el in d.shape]))
 #             np.save(fname, d)
     else:
         d = cache_n_conf(*params)
-        np.savetxt(fname, d.ravel())
+#         print(d.shape)
+        np.savetxt(fname, d.ravel(), header=','.join([str(el) for el in d.shape]))
 #         np.save(fname, d)
 
 
     return d
-
 
 def n_conf(N, dx, dy, dz):
     """

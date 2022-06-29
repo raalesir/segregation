@@ -20,7 +20,7 @@ from statistics import Counter
 
 
 def get_n(box, density):
-    t = density*box[0]*box[1]*box[2]*8
+    t = density*box[0]*box[1]*box[2]
     return  int(t - t%2)
 
 
@@ -101,9 +101,9 @@ def run(density, n_boxes, thicknesses):
 
 if __name__ == "__main__":
 
-    density = 0.3
+    density = 0.6
     n_boxes = 7
-    thicknesses = list(range(1, 4))
+    thicknesses = list(range(2, 5))
 
     run(density, n_boxes, thicknesses)
 
