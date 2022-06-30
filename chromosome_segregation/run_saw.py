@@ -28,6 +28,7 @@ import  logging
 
 
 RESULTS_FOLDER = os.path.join(os.path.dirname(consts.__file__), consts.RESULTS_SAW)
+GROW_CACHES_FOLDER = os.path.join(os.path.dirname(consts.__file__), 'grow_caches.txt.gz')
 
 
 def get_n(box, density):
@@ -134,7 +135,7 @@ def run(density, n_boxes, thicknesses):
 
         #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
         logging.info('getting cached OR calculating from the scratch..')
-        consts.caches = get_grow_caches(fname='grow_caches.txt.gz',
+        consts.caches = get_grow_caches(fname = GROW_CACHES_FOLDER ,
                 params=(max_n+1, 25,25,25))
         logging.info('done calculating (n,dx,dy,dz) array')
         total_results = []
