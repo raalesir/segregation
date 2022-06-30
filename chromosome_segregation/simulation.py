@@ -152,7 +152,7 @@ def URW_saw(n, n_steps, box):
             coords = np.array(coords)#.astype(float)
 
             # extreme_x = max(abs(min(coords[:, 0])), max(coords[:, 0]))
-            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) +1) # we need halv since box=(a,b,c) are halves  as well
+            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) +1)
             # extreme_y = max(abs(min(coords[:, 1])), max(coords[:, 1]))
             extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) +1)
             # extreme_z = max(abs(min(coords[:, 2])), max(coords[:, 2]))
@@ -170,7 +170,7 @@ def URW_saw(n, n_steps, box):
 
     # array = aux.list_to_arr(size_boxes+)
 
-    return [el + sx[0] for el in size_boxes] #shifting so ....
+    return [el + sx[0] for el in size_boxes] #shifting so first box is always zero....
 
 
 
