@@ -27,7 +27,7 @@ from statistics import Counter
 import  logging
 
 
-RESULTS_FOLDER = consts.RESULTS_SAW
+RESULTS_FOLDER = os.path.join(os.path.dirname(consts.__file__), consts.RESULTS_SAW)
 
 
 def get_n(box, density):
