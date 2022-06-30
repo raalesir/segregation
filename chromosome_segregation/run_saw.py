@@ -159,9 +159,7 @@ def run(density, n_boxes, thicknesses):
                 logging.info('making distribution of boxes')
 
                 specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
-                total_results1.append(
-                    (*boxes[i], specific_free_energy, n)
-                )
+                total_results1.append( (*boxes[i], specific_free_energy, n)  )
                 results.append(list_to_arr(all_boxes))
 
             total_results.append(results)
@@ -184,9 +182,9 @@ if __name__ == "__main__":
             )
 
     density = 0.5
-    n_boxes = 7
+    n_boxes = 8
 
-    thicknesses = list(range(2, 4))
+    thicknesses = list(range(2, 6))
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=%s" %(density, n_boxes, thicknesses))
 
     run(density, n_boxes, thicknesses)
