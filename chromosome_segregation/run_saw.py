@@ -117,11 +117,15 @@ def process_result(distribution, box, density):
 
     n = get_n(box, density)
     specific_free_energy = f(1 / n, a=0.375, b=.1347, c=-.2459)
+    logging.info('specific_free_energy from the analytical curve  for n=%i is: %4.3f' %(n, specific_free_energy))
     n_conformations_total = overlaps.Overlap(n).n_conformations
+    logging.info('the total number of phantom conformation for n=%i is %e' %(n, n_conformations_total))
     saw_fraction = np.exp(specific_free_energy * n)
     n_saws = saw_fraction * n_conformations_total
-
-    return -np.log(distribution[box[0]] * n_saws) / n
+    logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
+    specific_free_energy_for_box = -np.log(distribution[box[0]] * n_saws) /n
+    logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, box, specific_free_energy_for_box))
+    return specific_free_energy_for_box
 
 
 
@@ -145,7 +149,7 @@ def run(density, n_boxes, thicknesses):
             boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
             logging.info('boxes: %s for thickness %i' % (boxes, thickness))
 
-            nsteps = np.linspace(20000 * thickness, 200000, n_boxes)
+            nsteps = np.linspace(20000 * thickness, 300000, n_boxes)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
