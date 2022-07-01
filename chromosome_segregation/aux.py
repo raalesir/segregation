@@ -572,4 +572,21 @@ def prepare_entropy_plot(paths):
     return x, y, errs
 
 
+def get_box(sx, sy, sz, l):
+    variants = [(l[0], l[1], l[2]),
+                (l[0], l[2], l[1]),
+                (l[1], l[0], l[2]),
+                (l[1], l[2], l[0]),
+                (l[2], l[0], l[1]),
+                (l[2], l[1], l[0])
+                ]
+    min_box = 1000
+    for v in variants:
+        box_x = sx.index(v[0])
+        box_y = sy.index(v[1])
+        box_z = sz.index(v[2])
+        box = max(box_x, box_y, box_z)
+        if box < min_box:
+            min_box = box
 
+    return min_box
