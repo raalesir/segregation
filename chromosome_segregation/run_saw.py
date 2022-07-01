@@ -157,8 +157,10 @@ def run(density, n_boxes, thicknesses):
             results = []
             for i in range(n_boxes):
                 n = get_n(boxes[i],density)
-                print(
-                    "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
+                # print(
+                #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
+
+                logging.info('running URW_SAW with n=%i, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
                 all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
                 logging.info('making distribution of boxes')
 
