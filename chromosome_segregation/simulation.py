@@ -7,7 +7,7 @@ try:
     import  aux
 except ImportError:
     from chromosome_segregation.regrow import regrow_biased, regrow, regrow_saw
-    # import  aux
+    from  chromosome_segregation import  aux
 
 
 from scipy.special import comb
@@ -152,11 +152,11 @@ def URW_saw(n, n_steps, box):
             coords = np.array(coords)#.astype(float)
 
             # extreme_x = max(abs(min(coords[:, 0])), max(coords[:, 0]))
-            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) )
+            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) +1)  # otherwise the volume could be  zero!
             # extreme_y = max(abs(min(coords[:, 1])), max(coords[:, 1]))
-            extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) )
+            extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) +1)
             # extreme_z = max(abs(min(coords[:, 2])), max(coords[:, 2]))
-            extreme_z = (max(coords[:, 2]) - min(coords[:, 2]) )
+            extreme_z = (max(coords[:, 2]) - min(coords[:, 2]) +1)
 
             # box_x = sx.index(extreme_x) # extreme_x - extreme_x % dx) / dx
             # box_y = sy.index(extreme_y) #(extreme_y - extreme_y % dy) / dy
