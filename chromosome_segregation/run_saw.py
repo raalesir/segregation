@@ -1,6 +1,7 @@
 import  numpy as np
 
 import  os
+import pandas as pd
 
 LOG_FILE="saw.log"
 
@@ -83,6 +84,57 @@ def plot(total_results, thicknesses,n_boxes,density):
     plt.savefig('thickness.png')
 
 
+def load_and_process_results():
+
+    data_per_density = [os.path.join(RESULTS_FOLDER, el) for el in os.listdir(RESULTS_FOLDER) if el.startswith('density')]
+    logging.info('results  folder per density: %s'%data_per_density)
+
+    density_data = {}
+    for d in data_per_density:
+        tmp = []
+        for root, dirs, files in os.walk(d):
+            if files[0].startswith('data'):
+                tmp.append(os.path.join(root, files[0]))
+        density_data[d.split('/')[-1]] = tmp
+        logging.info('density and corresponding data files: %s' %density_data[d.split('/')[-1]])
+
+
+    for k, files in density_data.items():
+        logging.info('working with density: %s' %k)
+        dfs = []
+        for file in files:
+            logging.info('reading file: %s'% file)
+            dfs.append(pd.read_csv(file, sep=' ', header=None))
+        df = pd.concat(dfs)
+        df.columns = ['x', 'y', 'z', 'en', 'n']
+        df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        #     print(df.head(n=50))
+        #     aggregated = df.groupby(['x','y','z']).agg({'en':['mean', 'std'], 'n':['mean']})
+        aggregated = df.groupby(['x', 'y', 'z']).agg(en_mean=('en', 'mean'), en_std=('en', 'std'), n=('n', 'mean'))
+
+        aggregated.reset_index(inplace=True)
+        aggregated['area'] = aggregated['y'] * aggregated['z']
+
+        make_energy_plot(aggregated, save_to=os.path.join(RESULTS_FOLDER, k, 'f_n.png'))
+
+
+
+def make_energy_plot(data, save_to):
+    plt.rc('font', size=16)
+    plt.figure(figsize=(16, 10))
+
+    for k, group in data.groupby('area'):
+        plt.plot(1 / group['n'], group['en_mean'], linestyle='-', marker='p', markersize=10, label='area=' + str(k))
+        plt.errorbar(1/group['n'], group['en_mean'], yerr=group['en_std'], capsize=4)
+
+    plt.grid()
+    plt.legend()
+    plt.xlabel('$1/N$')
+    plt.ylabel('$F/N$')
+    plt.title('$F/N$ for different areas; concentration=0.5')
+
+    plt.savefig(save_to)
+
 
 def save_results(results, density):
     """
@@ -123,6 +175,7 @@ def process_result(distribution, box, density):
     saw_fraction = np.exp(specific_free_energy * n)
     n_saws = saw_fraction * n_conformations_total
     logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
+    logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n,box,distribution[box[0]] * n_saws))
     specific_free_energy_for_box = -np.log(distribution[box[0]] * n_saws) /n
     logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, box, specific_free_energy_for_box))
     return specific_free_energy_for_box
@@ -174,6 +227,7 @@ def run(density, n_boxes, thicknesses):
 
 
         plot(total_results, thicknesses, n_boxes, density)
+
 
 
 if __name__ == "__main__":
