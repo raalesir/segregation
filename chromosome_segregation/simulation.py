@@ -135,14 +135,14 @@ def URW_saw(n, n_steps, box):
     # sy = list(range(b-a, len(sx)-b+a))
     # sz = list(range(c-a, len(sx)-c+a))
 
-    print(sx)
-    print(sy)
-    print(sz)
+    logging.info('x-array is: %s' %sx)
+    logging.info('y-arrya is: %s' %sy)
+    logging.info('z-array is: %s' %sz)
 
 
     for i in range(1, n_steps):
         if i % 10000 == 0:
-            print("passed %3.1f %%, failed to grow: %3.1f%%" % (i / n_steps * 100, failed_to_grow / i * 100))
+            logging.info("passed %3.1f %%, failed to grow: %3.1f%%" % (i / n_steps * 100, failed_to_grow / i * 100))
         # coords = regrow(n, 0, 0, 0, [])
         coords, _, _ = regrow_saw(n, 0, 0, 0, [], w=1, alpha=0.0, k=0)
         if len(coords) < n:
