@@ -152,17 +152,18 @@ def URW_saw(n, n_steps, box):
             coords = np.array(coords)#.astype(float)
 
             # extreme_x = max(abs(min(coords[:, 0])), max(coords[:, 0]))
-            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) +1)
+            extreme_x = (max(coords[:, 0]) - min(coords[:, 0]) )
             # extreme_y = max(abs(min(coords[:, 1])), max(coords[:, 1]))
-            extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) +1)
+            extreme_y = (max(coords[:, 1]) - min(coords[:, 1]) )
             # extreme_z = max(abs(min(coords[:, 2])), max(coords[:, 2]))
-            extreme_z = (max(coords[:, 2]) - min(coords[:, 2]) +1)
+            extreme_z = (max(coords[:, 2]) - min(coords[:, 2]) )
 
-            box_x = sx.index(extreme_x) # extreme_x - extreme_x % dx) / dx
-            box_y = sy.index(extreme_y) #(extreme_y - extreme_y % dy) / dy
-            box_z = sz.index(extreme_z)  #(extreme_z - extreme_z % dz) / dz
-            box = max(box_x, box_y, box_z)
+            # box_x = sx.index(extreme_x) # extreme_x - extreme_x % dx) / dx
+            # box_y = sy.index(extreme_y) #(extreme_y - extreme_y % dy) / dy
+            # box_z = sz.index(extreme_z)  #(extreme_z - extreme_z % dz) / dz
+            # box = max(box_x, box_y, box_z)
 
+            box = aux.get_box(sx=sx, sy=sy, sz=sz, l=(extreme_x, extreme_y, extreme_z))
             size_boxes.append(int(box))
 
     # bins, counts_ = np.unique(intersections, return_counts=True)

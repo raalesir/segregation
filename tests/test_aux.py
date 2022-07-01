@@ -15,6 +15,24 @@ import numpy as np
 #         from .sim  import  aux
 
 
+def test_get_box():
+
+    sx = range(-2, 5)
+    sy = range(-1, 6)
+    sz = range(7)
+    box = (4, 2, 3)
+
+    assert aux.get_box(sx, sy, sz, box) == 4
+
+
+def test_get_box2():
+    sx = range(7)
+    sy = range(-2, 5)
+    sz = range(-1, 6)
+    box = (4, 2, 3)
+    assert aux.get_box(sx, sy, sz, box) == 4
+
+
 def test_cache_n_conf():
     res1 = np.array(
         [[[[0., 1.],
