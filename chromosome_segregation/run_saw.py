@@ -200,9 +200,9 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
         for thickness_x, thickness_y in zip(thicknesses_x, thicknesses_y):
             boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
-            logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thicknesses_y))
+            logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
 
-            nsteps = np.linspace(20000 * max(thickness_x, thickness_y), 300000, n_boxes)
+            nsteps = np.linspace(20000 * max(thickness_x, thickness_y), 500000, n_boxes)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
