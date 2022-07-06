@@ -51,15 +51,15 @@ def f(x, a,b,c):
     return a*x*np.log(x) +  b*x +c
 
 
-def plot(total_results, thicknesses,n_boxes,density):
+def plot(total_results, thicknesses_x, thicknesses_y, n_boxes, density):
     plt.figure(figsize=(12, 8))
     # thickness=3
 
 
-    for result, thickness in zip(total_results, thicknesses):
+    for result, thickness_x, thickness_y in zip(total_results, thicknesses_x, thicknesses_y):
         x = []
         y = []
-        boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
+        boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
         for i in range(len(boxes)):
             n = get_n(boxes[i], density)
             x.append(1 - n / get_n(boxes[0], density))
@@ -72,10 +72,10 @@ def plot(total_results, thicknesses,n_boxes,density):
             print(i, boxes[i], n, result[i][boxes[i][0]], result[i][boxes[i][0]] * n_saws)  # , list_to_arr(results[i]))
             y.append(-np.log(result[i][boxes[i][0]] * n_saws) / (n))
 
-        plt.plot(x, y, linestyle='--', marker='o', markersize=10, label='thickness=%i' % thickness)
+        plt.plot(x, y, linestyle='--', marker='o', markersize=10, label='thickness=%i,%i' % (thickness_x, thickness_y))
 
 
-        thickness -= 1
+        # thickness -= 1
     plt.grid()
     plt.xlabel("$1-N/N_0$")
     plt.ylabel("$ F/N$")
@@ -183,10 +183,10 @@ def process_result(distribution, box, density):
 
 
 
-def run(density, n_boxes, thicknesses):
+def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
         logging.info("calculating maximal number of monomers...")
-        max_n = get_n([n_boxes, thicknesses[-1], thicknesses[-1]], density)
+        max_n = get_n([n_boxes, thicknesses_x[-1], thicknesses_y[-1]], density)
         logging.info('max_n=%i' % (max_n))
 
 
@@ -198,11 +198,11 @@ def run(density, n_boxes, thicknesses):
         total_results = []
         total_results1 = []
 
-        for thickness in thicknesses:
-            boxes = [[i, thickness, thickness] for i in range(n_boxes, 0, -1)]
-            logging.info('boxes: %s for thickness %i' % (boxes, thickness))
+        for thickness_x, thickness_y in zip(thicknesses_x, thicknesses_y):
+            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
+            logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thicknesses_y))
 
-            nsteps = np.linspace(20000 * thickness, 300000, n_boxes)
+            nsteps = np.linspace(20000 * max(thickness_x, thickness_y), 300000, n_boxes)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
@@ -226,7 +226,7 @@ def run(density, n_boxes, thicknesses):
         save_results(total_results1, density)
 
 
-        plot(total_results, thicknesses, n_boxes, density)
+        plot(total_results, thicknesses_x, thicknesses_y, n_boxes, density)
 
 
 
@@ -244,8 +244,11 @@ if __name__ == "__main__":
     density = 0.5
     n_boxes = 8
 
-    thicknesses = list(range(2, 6))
-    logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=%s" %(density, n_boxes, thicknesses))
+    thicknesses_x = list(range(2, 6))
+    thicknesses_y = [el +1 for el in thicknesses_x]
 
-    run(density, n_boxes, thicknesses)
+    logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
+                 (density, n_boxes, thicknesses_x, thicknesses_y))
+
+    run(density, n_boxes, thicknesses_x, thicknesses_y)
 

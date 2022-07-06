@@ -127,9 +127,9 @@ def URW_saw(n, n_steps, box):
     # print("box=%s, scale=%i"%(box, scale))
     size_boxes = []
 
-    sx = list(range(a-max(box), a + max_size+4 ))#scale+1))
-    sy = list(range(b-max(box), b+max_size+4)) #scale+1))
-    sz = list(range(c-max(box), c + max_size+4 ))#scale+1))
+    sx = list(range(a-max(box), a + max_size+10 ))#scale+1))
+    sy = list(range(b-max(box), b+max_size+10)) #scale+1))
+    sz = list(range(c-max(box), c + max_size+10 ))#scale+1))
     #
     # sx = list(range(0, a + max_size+2))
     # sy = list(range(b-a, len(sx)-b+a))
@@ -138,6 +138,10 @@ def URW_saw(n, n_steps, box):
     logging.info('x-array is: %s' %sx)
     logging.info('y-arrya is: %s' %sy)
     logging.info('z-array is: %s' %sz)
+    print('x-array is: %s' %sx)
+    print('y-array is: %s' %sy)
+    print('z-array is: %s' %sz)
+
 
 
     for i in range(1, n_steps):
