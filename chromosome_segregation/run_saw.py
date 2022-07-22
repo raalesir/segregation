@@ -116,6 +116,44 @@ def load_and_process_results():
         aggregated['area'] = aggregated['y'] * aggregated['z']
 
         make_energy_plot(aggregated, save_to=os.path.join(RESULTS_FOLDER, k, 'f_n.png'))
+        make_energy_plot_length(aggregated, save_to=os.path.join(RESULTS_FOLDER, k, 'f_length_s.png'))
+        make_energy_plot_area(aggregated, save_to=os.path.join(RESULTS_FOLDER, k, 'f_s_length.png'))
+
+
+
+def make_energy_plot_area(data, save_to):
+    plt.rc('font', size=16)
+
+    plt.figure(figsize=(14, 8))
+    for k, group in data.groupby('x'):
+        print(k)
+        plt.scatter(group['area'], group['en_mean'], label='length=' + str(k))
+        plt.errorbar(group['area'], group['en_mean'], yerr=group['en_std'], capsize=10)
+    plt.grid()
+    plt.legend()
+    plt.title('$F/N$ as a function of $S$ for different lengths; contentration=0.5')
+    plt.xlabel('area, $S$')
+    plt.ylabel('$F/N$')
+
+    plt.savefig(save_to)
+
+
+
+def make_energy_plot_length(data, save_to):
+    plt.rc('font', size=16)
+
+    plt.figure(figsize=(14, 8))
+    for k, group in data.groupby('area'):
+        # print(k)
+        plt.plot(group['x'], group['en_mean'], marker='p', label='area=' + str(k))
+    # plt.errorbar(group['area'], group['en_mean'], yerr=group['en_std'],capsize=10)
+    plt.grid()
+    plt.legend()
+    plt.title('$F/N$ as a function of $x$ for different S; concentration=0.5')
+    plt.xlabel('length, $x$')
+    plt.ylabel('$F/N$')
+
+    plt.savefig(save_to)
 
 
 
@@ -168,11 +206,11 @@ def process_result(distribution, box, density):
     """
 
     n = get_n(box, density)
-    specific_free_energy = f(1 / n, a=0.375, b=.1347, c=-.2459)
-    logging.info('specific_free_energy from the analytical curve  for n=%i is: %4.3f' %(n, specific_free_energy))
+    specific_excess_entropy = f(1 / n, a=0.375, b=.1347, c=-.2459)
+    logging.info('specific_excess_entropy from the analytical curve  for n=%i is: %4.3f' %(n, specific_excess_entropy))
     n_conformations_total = overlaps.Overlap(n).n_conformations
     logging.info('the total number of phantom conformation for n=%i is %e' %(n, n_conformations_total))
-    saw_fraction = np.exp(specific_free_energy * n)
+    saw_fraction = np.exp(specific_excess_entropy * n)
     n_saws = saw_fraction * n_conformations_total
     logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
     logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n,box,distribution[box[0]] * n_saws))

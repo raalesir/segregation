@@ -590,3 +590,29 @@ def get_box(sx, sy, sz, l):
             min_box = box
 
     return min_box
+
+
+def get_en_n_to_infty(data, filters={'min_n': 20, 'area': 25.0}):
+    """
+    calculating specific free energy for  the limit for n to infty. Using scipy.curve_fit
+    """
+    min_energy = {}
+    print(filters)
+    area_filter = filters.pop('area', None)
+    #     print(type(area_filter))
+
+    for k, group in aggregated.groupby('area'):
+        if area_filter:
+            group = group[(group['n'] > filters['min_n']) & (group['area'] == area_filter)][['n', 'en_mean']].dropna()
+        else:
+            group = group[group['n'] > filters['min_n']][['n', 'en_mean']].dropna()
+
+        # get fit parameters from scipy curve fit
+        if len(group['en_mean']) > 0:
+            try:
+                parameters, covariance = curve_fit(fun, 1 / group['n'], group['en_mean'])
+                min_energy[k] = parameters[1]
+            except:
+                pass
+
+    return min_energy
