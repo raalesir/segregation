@@ -1,10 +1,13 @@
+import os
+
+
 caches = None
 # ds  = 0.1
 
 
-size_x = 10
-size_y = 10
-size_z = 10
+size_x = 100
+size_y = 2
+size_z = 2
 
 RUN_FREE = False
 RUN_HALFSPACE = False
@@ -25,3 +28,6 @@ else:
 
 
 RESULTS_SAW = 'results_saw'
+RESULTS_SEGREGATION_PROVE = 'segregation_prove'
+
+GROW_CACHES_FOLDER = os.path.join(os.path.dirname(__file__), 'grow_caches.txt.gz')
