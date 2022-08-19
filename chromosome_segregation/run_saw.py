@@ -62,15 +62,16 @@ def plot(total_results, thicknesses_x, thicknesses_y, n_boxes, density):
         boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
         for i in range(len(boxes)):
             n = get_n(boxes[i], density)
-            x.append(1 - n / get_n(boxes[0], density))
+            if n>0:
+                x.append(1 - n / get_n(boxes[0], density))
             #         x.append(n)
-            specific_free_energy = f(1 / n, a=0.375, b=.1347, c=-.2459)
-            n_conformations_total = overlaps.Overlap(n).n_conformations
-            saw_fraction = np.exp(specific_free_energy * n)
-            n_saws = saw_fraction * n_conformations_total
+                specific_free_energy = f(1 / n, a=0.375, b=.1347, c=-.2459)
+                n_conformations_total = overlaps.Overlap(n).n_conformations
+                saw_fraction = np.exp(specific_free_energy * n)
+                n_saws = saw_fraction * n_conformations_total
 
-            print(i, boxes[i], n, result[i][boxes[i][0]], result[i][boxes[i][0]] * n_saws)  # , list_to_arr(results[i]))
-            y.append(-np.log(result[i][boxes[i][0]] * n_saws) / (n))
+                print(i, boxes[i], n, result[i][boxes[i][0]], result[i][boxes[i][0]] * n_saws)  # , list_to_arr(results[i]))
+                y.append(-np.log(result[i][boxes[i][0]] * n_saws) / (n))
 
         plt.plot(x, y, linestyle='--', marker='o', markersize=10, label='thickness=%i,%i' % (thickness_x, thickness_y))
 
@@ -202,7 +203,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
             boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
             logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
 
-            nsteps = np.linspace(20000 * max(thickness_x, thickness_y), 500000, n_boxes)
+            nsteps = np.linspace(2000 * max(thickness_x, thickness_y), 80000, n_boxes)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
@@ -213,15 +214,16 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
 
-                logging.info('running URW_SAW with n=%i, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
-                all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
-                logging.info('making distribution of boxes')
+                logging.info('running URW_SAW with n=%f, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
+                if n>0:
+                    all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
+                    logging.info('making distribution of boxes')
 
-                specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
-                total_results1.append( (*boxes[i], specific_free_energy, n)  )
-                results.append(list_to_arr(all_boxes))
+                    specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
+                    total_results1.append( (*boxes[i], specific_free_energy, n)  )
+                    results.append(list_to_arr(all_boxes))
 
-            total_results.append(results)
+                    total_results.append(results)
 
         save_results(total_results1, density)
 
@@ -244,7 +246,7 @@ if __name__ == "__main__":
     density = 0.5
     n_boxes = 8
 
-    thicknesses_x = list(range(2, 6))
+    thicknesses_x = list(range(1, 2))
     thicknesses_y = [el +1 for el in thicknesses_x]
 
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
