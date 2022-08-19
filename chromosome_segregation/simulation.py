@@ -259,12 +259,19 @@ def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_leng
 
 
 
-def WL_saw(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_length=1000, ds_min=0.0000001,
+
+def WL_CM_polymers(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_length=1000, ds_min=0.0000001,
        flatness=0.3):
     """
-    WL  procedure for calculation of SAW distribution based on size....
+    Calculates S(R_cm) -- entropy of a center of mass distance between two polymers, confined in the tube.
+    We fix two polymers at  (0,0,0). First we generate SAW for  one polymer, secondly -- the second, such that it
+    does not overlap with the first one. Both are inside the tube.
+    Calculate cm-distance and accumulate S(R_cm).
+    Regrow the first chain, so it does not  overlap with the second etc.
 
     """
+
+
     if min_overlaps > 0:
         #         max_overlaps += 1
         counts = np.zeros(max_overlaps + 2)
@@ -295,7 +302,7 @@ def WL_saw(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_
         for i in range(sweep_length):
 
             #             coords_n = regrow(n, 0,0,0, [])
-            coords_n, w_n, k_n = regrow_biased(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
+            coords_n, w_n, k_n = regrow_biased(n, 0, 0, 0, [], w=1, alpha=0, k=0)
 
             coords_n = np.array(coords_n)
 
