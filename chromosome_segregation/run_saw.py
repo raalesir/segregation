@@ -163,7 +163,7 @@ def make_energy_plot(data, save_to):
     plt.figure(figsize=(16, 10))
 
     for k, group in data.groupby('area'):
-        plt.plot(1 / group['n'], group['en_mean'], linestyle='-', marker='p', markersize=10, label='area=' + str(k))
+        plt.plot(1 / group['n'], group['en_mean'], linestyle='-', marker='p', markersize=10, label='$S=$' + str(int(k)))
         plt.errorbar(1/group['n'], group['en_mean'], yerr=group['en_std'], capsize=4)
 
     plt.grid()
@@ -214,8 +214,8 @@ def process_result(distribution, box, density):
     saw_fraction = np.exp(specific_excess_entropy * n)
     n_saws = saw_fraction * n_conformations_total
     logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
-    logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n,box,distribution[box[0]] * n_saws))
-    specific_free_energy_for_box = -np.log(distribution[box[0]] * n_saws) /n
+    logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n,box,np.sum(distribution[:box[0]+1]) * n_saws))
+    specific_free_energy_for_box = -np.log(np.sum(distribution[:box[0]+1]) * n_saws) /n
     logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, box, specific_free_energy_for_box))
     return specific_free_energy_for_box
 
@@ -252,11 +252,11 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
 
-                logging.info('running URW_SAW with n=%f, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
+                logging.info('running URW_SAW with n=%i, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
                 if n>0:
                     all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
-                    logging.info('making distribution of boxes')
-
+                    logging.info('making distribution for box %s' %boxes[i])
+                    logging.info(list_to_arr(all_boxes))
                     specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
                     total_results1.append( (*boxes[i], specific_free_energy, n)  )
                     results.append(list_to_arr(all_boxes))
@@ -281,11 +281,11 @@ if __name__ == "__main__":
                 ]
             )
 
-    density = 0.5
-    n_boxes = 8
+    density = 0.2
+    n_boxes = 9
 
-    thicknesses_x = list(range(1, 2))
-    thicknesses_y = [el +1 for el in thicknesses_x]
+    thicknesses_x = list(range(2, 9))
+    thicknesses_y = [el  for el in thicknesses_x]
 
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
                  (density, n_boxes, thicknesses_x, thicknesses_y))
