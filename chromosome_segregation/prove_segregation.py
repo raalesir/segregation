@@ -104,7 +104,7 @@ def run_urw(n, iter_max=10000):
 
     logging.info('getting cached OR calculating from the scratch..')
     consts.caches = aux.get_grow_caches(fname=consts.GROW_CACHES_FOLDER,
-                                    params=(n + 1, 25, 25, 25))
+                                    params=(n + 5, 30, 30, 30))
     logging.info('done calculating (n,dx,dy,dz) array')
 
     cm_distribution = []
@@ -217,9 +217,9 @@ if __name__ == "__main__":
 
     # print(run_urw(n=10))
     # run_wl(n=10)
-    ns = [50]
+    ns = [140]
     for n in ns:
-        for i in range(3):
+        for i in range(2):
             iter_max = 10000 * n
             logging.info("running URW for n=%i, number of iterations = %i" %(n, iter_max))
             results = run_urw(n=n, iter_max=iter_max)

@@ -6,8 +6,8 @@ caches = None
 
 
 size_x = 100
-size_y = 2
-size_z = 2
+size_y = 4
+size_z = 4
 
 RUN_FREE = False
 RUN_HALFSPACE = False
