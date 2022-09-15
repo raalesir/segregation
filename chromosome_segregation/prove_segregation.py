@@ -141,6 +141,45 @@ def run_urw(n, iter_max=10000):
     return cm_distribution #tmp1.intersection( tmp2)
 
 
+
+def run_urw_simultaneously(n, iter_max=10000):
+
+    logging.info('getting cached OR calculating from the scratch..')
+    consts.caches = aux.get_grow_caches(fname=consts.GROW_CACHES_FOLDER,
+                                    params=(n + 1, 25, 25, 25))
+    logging.info('done calculating (n,dx,dy,dz) array')
+
+    cm_distribution = []
+
+    max_n_fails = 5
+    for i in range(iter_max):
+        if i%1000 == 0:
+            logging.info("%3.1f %%"%(1.0*i/iter_max*100))
+        coords1 = coords2 = []
+        n_fails = 0
+        while (len(coords1) < n) and (n_fails < max_n_fails):
+            coords1, coords2 = regrow.regrow_saw_segregation_prove_two_chains(n,0,0,0, n, 0, 0, 0, res1=[], res2=[])
+            # coords1, w1, k = regrow.regrow_saw_segregation_prove(n, 0, 0, 0, [], w=1, alpha=0.0, k=0, coords=[])
+            n_fails +=1
+        logging.debug("coords1 length is: %i; coords2 length is: %i "%(len(coords1), len(coords2)))
+        if (n_fails < max_n_fails) and (len(coords2) == n) and (len(coords1) == n):
+            cm_distance = get_cm_distance(coords1, coords2)
+            mixing_degree = get_mixing_degree(coords1, coords2)
+
+
+            logging.debug("cm distance is: %3.1f" %cm_distance)
+            cm_distribution.append((cm_distance, mixing_degree))
+        # count = consts.caches[n-2, 1, 0, 0]
+        # count = aux.n_conf(n,0,0,0)
+        # print(1/count, consts.caches[n-1,0,0,0],  consts.caches[n-2,1,0,0],consts.caches[n-3,0,0,0])
+
+        # tmp1 = set(tuple(el) for el in coords1)
+        # tmp2 = set(tuple(el) for el in coords2)
+        # print(repr(coords1))
+        # print(repr(coords2))
+    return cm_distribution #tmp1.intersection( tmp2)
+
+
 def run_wl(n, ds_min=0.01):
 
     logging.info("running WL")
@@ -217,12 +256,14 @@ if __name__ == "__main__":
 
     # print(run_urw(n=10))
     # run_wl(n=10)
-    ns = [140]
+    ns = [10]
     for n in ns:
-        for i in range(2):
-            iter_max = 10000 * n
+        for i in range(3):
+            iter_max = 1000 * n
             logging.info("running URW for n=%i, number of iterations = %i" %(n, iter_max))
-            results = run_urw(n=n, iter_max=iter_max)
+            # results = run_urw(n=n, iter_max=iter_max)
+            results = run_urw_simultaneously(n=n, iter_max=iter_max)
+
             area = consts.size_z  * consts.size_y
             save_results(results, area, n)
 
