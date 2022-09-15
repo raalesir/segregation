@@ -2,6 +2,7 @@
 Changing chain conformation
 """
 
+import logging
 import sys
 
 import numpy as np
@@ -88,7 +89,6 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
             # to the number of coordinate coinsidence.
             n_coincide = 0
             if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
-
                 n_coincide = 1
             all_coincidence.append(n_coincide)
 
@@ -122,8 +122,6 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
-
-
 def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
     """
     recursive  regrow for SAW only.
@@ -150,7 +148,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
                 n_coincide = 0
             all_coincidence.append(n_coincide)
             # checking if outside the box
-            is_inside = 1#aux.is_inside_box(*neighbour[1:])
+            is_inside = 1  # aux.is_inside_box(*neighbour[1:])
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
@@ -209,15 +207,14 @@ def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
                 n_coincide = 0
             all_coincidence.append(n_coincide)
             # checking if outside the box
-            is_inside =  aux.is_inside_box(*neighbour[1:])
+            is_inside = aux.is_inside_box(*neighbour[1:])
 
-            #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
-            # print(count, neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3]))
 
             counts.append(count * n_coincide * is_inside)
             tmp += count * n_coincide * is_inside  # accumulating the denominator
         if sum(counts) == 0:
+            logging.info("failed to grow... restarting")
             # print('failed to grow... restarting')
             return res + [[0, 0, 0]], w, k
         # calculating W
@@ -228,7 +225,7 @@ def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
         # counts = [c / sum(counts) for c in counts]
 
         # making cumulative sum
-        counts_ = np.cumsum( [c / sum(counts) for c in counts] )
+        counts_ = np.cumsum([c / sum(counts) for c in counts])
 
         if sum(counts_) == 0:
             print('failed to grow')
@@ -239,13 +236,90 @@ def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
         res.append(neighbours[selected][1:])
 
         # calculating the probability of the configuration
-        w = w * counts[selected]/tmp
+        w = w * counts[selected] / tmp
 
         if counts[selected] == 0:
             print('SELECTED NOT POSSIBLE')
 
         k += all_coincidence[selected]
         return regrow_saw_segregation_prove(*neighbours[selected], res, w, alpha, k, coords)
+
+
+
+def build_one_monomer(neighbours, res1, res2):
+
+    counts = []
+    tmp = 0
+    all_coincidence = []
+    for neighbour in neighbours:
+
+        # if there is already such a point, set n_coincide=0 to filter out that trial
+        n_coincide = 1
+        if (neighbour[1:] in res1) or (neighbour[1:] == [0, 0, 0]) or (neighbour[1:] in res2):
+            n_coincide = 0
+        all_coincidence.append(n_coincide)
+        # checking if outside the box
+        is_inside = aux.is_inside_box(*neighbour[1:])
+
+        count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
+
+        counts.append(count * n_coincide * is_inside)
+        tmp += count * n_coincide * is_inside  # accumulating the denominator
+
+    if sum(counts) == 0:
+        logging.debug("failed to grow... restarting")
+        return -1 #res1 + [[0, 0, 0]]
+
+    # making cumulative sum
+    counts_ = np.cumsum([c / sum(counts) for c in counts])
+
+    # selecting one of neighbours
+    selected = np.argmax(counts_ > np.random.random())
+
+    return selected
+
+
+
+
+def regrow_saw_segregation_prove_two_chains(n1, dx1, dy1, dz1, n2, dx2, dy2, dz2, res1, res2):
+    """
+    recursive SAW regrow  for two chains simultaneously
+    """
+
+    if n1 == 1:
+        return res1 + [[0, 0, 0]], res2 + [[0, 0, 0]] #w, k
+    else:
+        neighbours1 = [[n1 - 1, dx1 - 1, dy1, dz1],
+                      [n1 - 1, dx1 + 1, dy1, dz1],
+                      [n1 - 1, dx1, dy1 - 1, dz1],
+                      [n1 - 1, dx1, dy1 + 1, dz1],
+                      [n1 - 1, dx1, dy1, dz1 - 1],
+                      [n1 - 1, dx1, dy1, dz1 + 1]
+                      ]
+        neighbours2 = [[n2 - 1, dx2 - 1, dy2, dz2],
+                       [n2 - 1, dx2 + 1, dy2, dz2],
+                       [n2 - 1, dx2, dy2 - 1, dz2],
+                       [n2 - 1, dx2, dy2 + 1, dz2],
+                       [n2 - 1, dx2, dy2, dz2 - 1],
+                       [n2 - 1, dx2, dy2, dz2 + 1]
+                       ]
+        # growing a monomer for  one  chain
+        selected1 = build_one_monomer(neighbours1, res1, res2)
+        if  selected1 >-1:
+            res1.append(neighbours1[selected1][1:])
+        else:
+            logging.debug("selected1 is: %i" %selected1)
+            return res1 + [[0, 0, 0]], res2 + [[0, 0, 0]]
+
+        # growing a monomer for  the another  chain
+        selected2 = build_one_monomer(neighbours2, res1, res2)
+        if selected2 >-1:
+            res2.append(neighbours2[selected2][1:])
+        else:
+            return res1 + [[0, 0, 0]], res2 + [[0, 0, 0]]
+
+
+        return regrow_saw_segregation_prove_two_chains(*neighbours1[selected1], *neighbours2[selected2],  res1, res2)
 
 # """
 # Changing chain conformation
