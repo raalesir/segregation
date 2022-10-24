@@ -342,11 +342,13 @@ def get_grow_caches(fname, params):
 #             print(d.shape, 'fff')
 
         except: pass
-        if d.shape < params:
-#             print(params)
+        if any(el[0]<el[1] for el in zip(d.shape,params)):
+            logging.info("need to recalculate")
+            logging.info("shape of existing cache is %s, shape of query is: %s" % (str(d.shape), str(params)))
+
             d = cache_n_conf(*params)
             np.savetxt(fname, d.ravel(), header=','.join([str(el) for el in d.shape]))
-#             np.save(fname, d)
+        logging.info("shape of existing cache is %s, shape of query is: %s"%(str(d.shape), str(params)))
     else:
         d = cache_n_conf(*params)
 #         print(d.shape)
@@ -572,6 +574,26 @@ def prepare_entropy_plot(paths):
     return x, y, errs
 
 
+# def get_box(sx, sy, sz, l):
+#     variants = [(l[0], l[1], l[2]),
+#                 (l[0], l[2], l[1]),
+#                 (l[1], l[0], l[2]),
+#                 (l[1], l[2], l[0]),
+#                 (l[2], l[0], l[1]),
+#                 (l[2], l[1], l[0])
+#                 ]
+#     min_box = 1000
+#     for v in variants:
+#         box_x = sx.index(v[0])
+#         box_y = sy.index(v[1])
+#         box_z = sz.index(v[2])
+#         box = max(box_x, box_y, box_z)
+#         if box < min_box:
+#             min_box = box
+#
+#     return min_box
+
+
 def get_box(sx, sy, sz, l):
     variants = [(l[0], l[1], l[2]),
                 (l[0], l[2], l[1]),
@@ -582,14 +604,53 @@ def get_box(sx, sy, sz, l):
                 ]
     min_box = 1000
     for v in variants:
-        box_x = sx.index(v[0])
-        box_y = sy.index(v[1])
-        box_z = sz.index(v[2])
-        box = max(box_x, box_y, box_z)
-        if box < min_box:
-            min_box = box
+        try:
 
-    return min_box
+            if v[0] < sx[0]:
+                box_x = 0
+            else:
+                box_x = sx.index(v[0])
+
+            if v[1] < sy[0]:
+                box_y = 0
+            else:
+                box_y = sy.index(v[1])
+
+            if v[2] < sz[0]:
+                box_z = 0
+            else:
+                box_z = sz.index(v[2])
+
+        # try:
+        #     box_x = sx.index(v[0])
+        #     box_y = sy.index(v[1])
+        #     box_z = sz.index(v[2])
+            box = max(box_x, box_y, box_z)
+
+            if box < min_box:
+                min_box = box
+        except ValueError as e:
+            # print(v)
+            pass
+
+    if min_box == 1000:
+        return None
+    else:
+        return min_box
+
+
+
+def get_indexes(box, extend_to_left=1, extend_to_right=5, length=30):
+    min_ = min(box)
+    xs = range(box[0] - min_, length + box[0] - min_)
+    ys = range(box[1] - min_, length + box[1] - min_)
+    zs = range(box[2] - min_, length + box[2] - min_)
+
+    index_in_focus = xs.index(box[0])
+
+    a, b = max(0, index_in_focus - extend_to_left), index_in_focus + extend_to_right
+    return list(xs)[a:b + 1], list(ys)[a:b + 1], list(zs)[a:b + 1]
+
 
 
 def get_en_n_to_infty(data, filters={'min_n': 20, 'area': 25.0}):
