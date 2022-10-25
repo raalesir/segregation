@@ -202,7 +202,7 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
     k_o = 0
     collect_s = []
     sweep_number = 0
-    alpha = 0.7
+    alpha = 0.0
     logging.info('alpha is: %f'%alpha)
     while ds > ds_min:
         sweep_number += 1
@@ -237,7 +237,12 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
                 # print((w_n / w_o) * np.exp(-alpha * (k_o - k_n)), k_n, w_n)
                 # if np.random.random() < np.exp(s[box_o] - s[box_n]):
                 if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[box_o] - s[box_n]):
+
                     box_o = box_n
+                    if np.exp(-alpha*k_n)/w_n != wn[box_o]:
+                        wn[box_o] = (wn[box_o] + np.exp(-alpha*k_n)/w_n) / 2
+
+
                     w_o=w_n
                     k_o=k_n
 
@@ -258,9 +263,9 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
 
                 counts[box_o] += 1
                 s[box_o] += ds
-                wn[box_o] = (wn[box_o] + w_o)/2
-                if box_o ==1 :
-                    print(w_o, wn[box_o])
+                # if box_o == 1:
+                #   print(w_o, wn[box_o])
+
         # print(o_)
 
         t = counts[indexes_]
@@ -268,7 +273,7 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
         # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
         # print(t, end='\r')
         print(t)
-        print(wn)
+        # print(wn)
         logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
             counts = 0 * counts
