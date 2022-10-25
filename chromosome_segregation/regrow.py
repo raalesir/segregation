@@ -140,6 +140,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
         counts = []
         tmp = 0
         all_coincidence = []
+        collect_closeness_to_axis=[]
         for neighbour in neighbours:
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
@@ -147,18 +148,26 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
             if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
                 n_coincide = 0
             all_coincidence.append(n_coincide)
+
             # checking if outside the box
-            is_inside = 1  # aux.is_inside_box(*neighbour[1:])
+            # is_inside = 1  # aux.is_inside_box(*neighbour[1:])
+            # sum of distances to OX axis
+
+            closeness_to_axis = abs(neighbour[2]) + abs(neighbour[3])
+
+
+            collect_closeness_to_axis.append(closeness_to_axis)
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
-            counts.append(count * n_coincide * is_inside)
-            tmp += count * n_coincide * is_inside  # accumulating the denominator
+            counts.append(count * n_coincide * np.exp(-alpha*closeness_to_axis))
+
+            tmp += count * n_coincide  # accumulating the denominator
         if tmp == 0:
             # print('failed to grow... restarting')
             return res + [[0, 0, 0]], w, k
         # calculating W
-        # w = w * sum(counts) / tmp
+        w = w * sum(counts) / tmp
         #         print(w)
         # normalising p_i
         counts = [c / sum(counts) for c in counts]
@@ -177,7 +186,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
         if counts[selected] == 0:
             print('SELECTED NOT POSSIBLE')
 
-        k += all_coincidence[selected]
+        k += collect_closeness_to_axis[selected]
         return regrow_saw(*neighbours[selected], res, w, alpha, k)
 
 

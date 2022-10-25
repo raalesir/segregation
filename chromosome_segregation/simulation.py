@@ -179,6 +179,113 @@ def URW_saw(n, n_steps, box):
 
 
 
+def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
+    """
+    WL  procedure for calculation of SAW enropies inside matroshkas
+    """
+
+    s = np.zeros(len(indexes[0]))
+    counts = np.zeros(s.shape)
+    indexes_ = list(range(len(indexes[0])))
+    wn = np.zeros(s.shape)
+
+    logging.info('s size is: %s' % (s.shape))
+    logging.info('counts size is: %s' % (counts.shape))
+
+    logging.info('indexes: %s' % indexes_)
+    #     logging.info("max overlap %i, min_overlaps  %i" %(max_overlaps, min_overlaps))
+
+
+    ds = .01
+    box_o = -1
+    w_o = 1
+    k_o = 0
+    collect_s = []
+    sweep_number = 0
+    alpha = 0.0
+    logging.info('alpha is: %f'%alpha)
+    while ds > ds_min:
+        sweep_number += 1
+        failed_to_grow = 0
+        out_of_range = 0
+
+        for i in range(sweep_length):
+
+            coords_n, w_n, k_n = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
+            if len(coords_n) < n:
+                failed_to_grow += 1
+            # print('skipping, failed to grow')
+            else:
+                coords_n = np.array(coords_n)  # .astype(float)
+
+                # u, c = np.unique(coords_n, axis=0, return_counts=True)
+                # if coords_n.shape != u.shape:
+                #     print('wrong SAW')
+
+                extreme_x = (max(coords_n[:, 0]) - min(coords_n[:, 0]) ) # otherwise the volume could be  zero!
+                # if extreme_x == 0:   extreme_x =1
+                extreme_y = (max(coords_n[:, 1]) - min(coords_n[:, 1]))
+                # if extreme_y == 0:  extreme_y =1
+                extreme_z = (max(coords_n[:, 2]) - min(coords_n[:, 2]))
+                # if extreme_z == 0:   extreme_z =1
+
+                box_n = aux.get_box(sx=indexes[0], sy=indexes[1], sz=indexes[2], l=(extreme_x, extreme_y, extreme_z))
+
+                if (box_n == None):
+                    box_n = indexes_[-1]
+                    out_of_range += 1
+                # print((w_n / w_o) * np.exp(-alpha * (k_o - k_n)), k_n, w_n)
+                # if np.random.random() < np.exp(s[box_o] - s[box_n]):
+                if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[box_o] - s[box_n]):
+
+                    box_o = box_n
+                    if np.exp(-alpha*k_n)/w_n != wn[box_o]:
+                        wn[box_o] = (wn[box_o] + np.exp(-alpha*k_n)/w_n) / 2
+
+
+                    w_o=w_n
+                    k_o=k_n
+
+                # print(extreme_x, extreme_y, extreme_z, box_o)
+
+                # if (n_ > max_overlaps) and (min_overlaps > 0):
+                #     n_ = max_overlaps + 1
+                #     if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
+                #         w_o = w_n
+                #         k_o = k_n
+                #         o_ = n_
+                # elif (n_ <= max_overlaps) and (n_ >= min_overlaps):
+                #     n_ = n_ - n_ % grain
+                #     if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
+                #         w_o = w_n
+                #         k_o = k_n
+                #         o_ = n_
+
+                counts[box_o] += 1
+                s[box_o] += ds
+                # if box_o == 1:
+                #   print(w_o, wn[box_o])
+
+        # print(o_)
+
+        t = counts[indexes_]
+        mean = sum(t) / len(t)
+        # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
+        # print(t, end='\r')
+        print(t)
+        # print(wn)
+        logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
+        if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
+            counts = 0 * counts
+            collect_s.append(s.copy())
+            ds = ds / 2
+            logging.info("ds=%e, ds_min=%f, sweep number=%i" % (ds, ds_min, sweep_number))
+
+    return collect_s, sweep_number
+
+
+
+
 def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_length=1000, ds_min=0.0000001,
        flatness=0.3):
     """

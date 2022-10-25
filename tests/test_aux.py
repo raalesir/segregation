@@ -101,3 +101,38 @@ def test_n_conf_pass5():
     assert aux.n_conf(4, 0 ,0,2) == 28.0
 
 
+
+def test_get_box():
+    """
+
+    :return:
+    :rtype:
+    """
+
+    indexes = aux.get_indexes((6,3,5))
+
+    assert aux.get_box(sx=indexes[0], sy=indexes[1], sz=indexes[2], l=(6, 2, 4)) == 1
+
+
+def test_get_box_1():
+    """
+
+    :return:
+    :rtype:
+    """
+
+    indexes = aux.get_indexes((6,3,5))
+
+    assert aux.get_box(sx=indexes[0], sy=indexes[1], sz=indexes[2], l=(2,2,4)) == 0
+
+
+def test_get_box_2():
+    """
+
+    :return:
+    :rtype:
+    """
+
+    indexes = aux.get_indexes((6, 3, 5))
+
+    assert aux.get_box(sx=indexes[0], sy=indexes[1], sz=indexes[2], l=(9,4,2)) == 4

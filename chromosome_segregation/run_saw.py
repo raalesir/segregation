@@ -6,7 +6,7 @@ import pandas as pd
 LOG_FILE="saw.log"
 
 try:
-    from  chromosome_segregation.simulation import URW_saw
+    from  chromosome_segregation.simulation import URW_saw,WL_saw
     from chromosome_segregation.aux import cache_n_conf, get_grow_caches
 
     from chromosome_segregation  import overlaps
@@ -14,7 +14,7 @@ try:
     from  chromosome_segregation import  consts
     from chromosome_segregation import aux
 except:
-    from simulation import URW_saw
+    from simulation import URW_saw, WL_saw
     from aux import cache_n_conf, get_grow_caches
     import overlaps
     import consts
@@ -196,10 +196,11 @@ def save_results(results, density):
     data = np.array(results)
 
     np.savetxt(os.path.join(OUT_FOLDER, 'data.csv'),data, fmt='%3.1f %3.1f %3.1f %.4f %i'  )
+    os.rename(LOG_FILE, os.path.join(OUT_FOLDER, LOG_FILE) )
 
 
 
-def process_result(distribution, box, density):
+def process_result(distribution, box, start_from, density):
     """
     given normalized distribution and specific box calculates free energy for the box
     :return:
@@ -214,8 +215,10 @@ def process_result(distribution, box, density):
     saw_fraction = np.exp(specific_excess_entropy * n)
     n_saws = saw_fraction * n_conformations_total
     logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
-    logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n,box,np.sum(distribution[:box[0]+1]) * n_saws))
-    specific_free_energy_for_box = -np.log(np.sum(distribution[:box[0]+1]) * n_saws) /n
+
+    logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n, box, np.sum(distribution[:start_from+1]) * n_saws))
+    specific_free_energy_for_box = -np.log(np.sum(distribution[:start_from+1]) * n_saws) /n
+
     logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, box, specific_free_energy_for_box))
     return specific_free_energy_for_box
 
@@ -238,7 +241,8 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
         total_results1 = []
 
         for thickness_x, thickness_y in zip(thicknesses_x, thicknesses_y):
-            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes[0],n_boxes[1]-1, -1)]
+            #boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes[0],n_boxes[1]-1, -1)]
+            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, n_boxes-1, -1)]
             logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
 
             nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes[0]-n_boxes[1]+1)
@@ -247,21 +251,34 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
             print('number of steps: %s' % nsteps)
 
             results = []
+<<<<<<< HEAD
             for i in range(n_boxes[0]-n_boxes[1]+1):
+=======
+            for i in range(len(boxes)):
+>>>>>>> ec59c3d4a4b6a17641b19d8327e40300dd92d546
                 n = get_n(boxes[i],density)
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
 
-                logging.info('running URW_SAW with n=%i, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
+                logging.info('running WL_saw with n=%i, nsteps=%i, box=%s' %(n,nsteps[i], boxes[i]))
                 if n>0:
-                    all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
-                    logging.info('making distribution for box %s' %boxes[i])
-                    logging.info(list_to_arr(all_boxes))
-                    specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
-                    total_results1.append( (*boxes[i], specific_free_energy, n)  )
-                    results.append(list_to_arr(all_boxes))
+                    # all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
 
-                    total_results.append(results)
+                    extend_to_left = 1
+                    indexes = aux.get_indexes(boxes[i], extend_to_left=extend_to_left, extend_to_right=3, length=30)
+                    logging.info(indexes)
+                    s, sweep_number =  WL_saw(n, indexes, sweep_length=10000, ds_min=0.000001, flatness=0.3)
+                    logging.info('s: %s', s)
+                    # logging.info('making distribution for box %s' %boxes[i])
+                    # logging.info(list_to_arr(all_boxes))
+
+                    specific_free_energy = process_result(distribution=s[-1]/sum(s[-1]), box = boxes[i], start_from=extend_to_left, density=density)
+                    # specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
+
+                    total_results1.append( (*boxes[i], specific_free_energy, n)  )
+                    # results.append(list_to_arr(all_boxes))
+
+                    # total_results.append(results)
 
         save_results(total_results1, density)
 
@@ -282,7 +299,11 @@ if __name__ == "__main__":
             )
 
     density = 0.4
+<<<<<<< HEAD
     n_boxes = (27,23)
+=======
+    n_boxes = 15
+>>>>>>> ec59c3d4a4b6a17641b19d8327e40300dd92d546
 
     thicknesses_x = list(range(3, 4))
     thicknesses_y = [el  for el in thicknesses_x]
