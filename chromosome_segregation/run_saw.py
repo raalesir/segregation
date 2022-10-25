@@ -40,7 +40,7 @@ def get_n(box, density):
 def list_to_arr(boxes):
     # items = Counter(boxes).items()
 #     keys = Counter(boxes).keys()
-    arr = np.zeros(30)
+    arr = np.zeros(60)
     for item in Counter(boxes).items():
 #     print(item)
         arr[item[0]] = item[1]
@@ -225,7 +225,7 @@ def process_result(distribution, box, density):
 def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
         logging.info("calculating maximal number of monomers...")
-        max_n = get_n([n_boxes, thicknesses_x[-1], thicknesses_y[-1]], density)
+        max_n = get_n([n_boxes[0]+1, thicknesses_x[-1], thicknesses_y[-1]], density)
         logging.info('max_n=%i' % (max_n))
 
 
@@ -238,16 +238,16 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
         total_results1 = []
 
         for thickness_x, thickness_y in zip(thicknesses_x, thicknesses_y):
-            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, 0, -1)]
+            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes[0],n_boxes[1]-1, -1)]
             logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
 
-            nsteps = np.linspace(2000 * max(thickness_x, thickness_y), 80000, n_boxes)
+            nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes[0]-n_boxes[1]+1)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
 
             results = []
-            for i in range(n_boxes):
+            for i in range(n_boxes[0]-n_boxes[1]+1):
                 n = get_n(boxes[i],density)
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
@@ -281,14 +281,14 @@ if __name__ == "__main__":
                 ]
             )
 
-    density = 0.2
-    n_boxes = 9
+    density = 0.4
+    n_boxes = (27,23)
 
-    thicknesses_x = list(range(2, 9))
+    thicknesses_x = list(range(3, 4))
     thicknesses_y = [el  for el in thicknesses_x]
 
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
-                 (density, n_boxes, thicknesses_x, thicknesses_y))
+                 (density, n_boxes[0]-n_boxes[1]+1, thicknesses_x, thicknesses_y))
 
     run(density, n_boxes, thicknesses_x, thicknesses_y)
 
