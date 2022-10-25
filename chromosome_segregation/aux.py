@@ -346,7 +346,7 @@ def get_grow_caches(fname, params):
 #             print(params)
             d = cache_n_conf(*params)
             np.savetxt(fname, d.ravel(), header=','.join([str(el) for el in d.shape]))
-#             np.save(fname, d)
+        logging.info("shape  of saved caches is: %s, queried shape is:%s "%(str(d.shape), str(params))) 
     else:
         d = cache_n_conf(*params)
 #         print(d.shape)
