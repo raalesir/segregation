@@ -3,7 +3,7 @@ import  numpy as np
 import  os
 import pandas as pd
 
-LOG_FILE="saw.log"
+LOG_FILE="saw"+str(os.getpid())+".log"
 
 try:
     from  chromosome_segregation.simulation import URW_saw,WL_saw
@@ -228,7 +228,8 @@ def process_result(distribution, box, start_from, density):
 def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
         logging.info("calculating maximal number of monomers...")
-        max_n = get_n([n_boxes[0]+1, thicknesses_x[-1], thicknesses_y[-1]], density)
+        #max_n = get_n([n_boxes[0]+1, thicknesses_x[-1], thicknesses_y[-1]], density)
+        max_n = get_n([n_boxes, thicknesses_x[-1], thicknesses_y[-1]], density)
         logging.info('max_n=%i' % (max_n))
 
 
@@ -242,20 +243,19 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
         for thickness_x, thickness_y in zip(thicknesses_x, thicknesses_y):
             #boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes[0],n_boxes[1]-1, -1)]
-            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes, n_boxes-1, -1)]
+            boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes,
+                n_boxes-4, -1)]
             logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
 
-            nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes[0]-n_boxes[1]+1)
+            #nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes[0]-n_boxes[1]+1)
+            nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes)
             nsteps = [int(el - el % 1000) for el in nsteps]
             nsteps = nsteps[::-1]
             print('number of steps: %s' % nsteps)
 
             results = []
-<<<<<<< HEAD
-            for i in range(n_boxes[0]-n_boxes[1]+1):
-=======
+            #for i in range(n_boxes[0]-n_boxes[1]+1):
             for i in range(len(boxes)):
->>>>>>> ec59c3d4a4b6a17641b19d8327e40300dd92d546
                 n = get_n(boxes[i],density)
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
@@ -267,7 +267,8 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     extend_to_left = 1
                     indexes = aux.get_indexes(boxes[i], extend_to_left=extend_to_left, extend_to_right=3, length=30)
                     logging.info(indexes)
-                    s, sweep_number =  WL_saw(n, indexes, sweep_length=10000, ds_min=0.000001, flatness=0.3)
+                    s, sweep_number =  WL_saw(n, indexes, sweep_length=5000,
+                            ds_min=0.000001, flatness=0.3, decrease=2.0)
                     logging.info('s: %s', s)
                     # logging.info('making distribution for box %s' %boxes[i])
                     # logging.info(list_to_arr(all_boxes))
@@ -299,17 +300,16 @@ if __name__ == "__main__":
             )
 
     density = 0.4
-<<<<<<< HEAD
-    n_boxes = (27,23)
-=======
-    n_boxes = 15
->>>>>>> ec59c3d4a4b6a17641b19d8327e40300dd92d546
+    #n_boxes = (27,23)
+    n_boxes = 20
 
     thicknesses_x = list(range(3, 4))
     thicknesses_y = [el  for el in thicknesses_x]
 
+    #logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
+    #             (density, n_boxes[0]-n_boxes[1]+1, thicknesses_x, thicknesses_y))
     logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
-                 (density, n_boxes[0]-n_boxes[1]+1, thicknesses_x, thicknesses_y))
+                 (density, n_boxes, thicknesses_x, thicknesses_y))
 
     run(density, n_boxes, thicknesses_x, thicknesses_y)
 

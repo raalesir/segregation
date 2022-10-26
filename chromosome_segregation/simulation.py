@@ -179,7 +179,8 @@ def URW_saw(n, n_steps, box):
 
 
 
-def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
+def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
+        decrease = 2.0):
     """
     WL  procedure for calculation of SAW enropies inside matroshkas
     """
@@ -196,20 +197,22 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
     #     logging.info("max overlap %i, min_overlaps  %i" %(max_overlaps, min_overlaps))
 
 
-    ds = .01
+    ds = .1
     box_o = -1
     w_o = 1
     k_o = 0
     collect_s = []
     sweep_number = 0
     alpha = 0.0
+    frozen =0
     logging.info('alpha is: %f'%alpha)
     while ds > ds_min:
         sweep_number += 1
         failed_to_grow = 0
         out_of_range = 0
-
+        alpha_o = 0
         for i in range(sweep_length):
+            alpha = np.random.rand()*2 #choice((0,1,2))
 
             coords_n, w_n, k_n = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
             if len(coords_n) < n:
@@ -236,16 +239,22 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
                     out_of_range += 1
                 # print((w_n / w_o) * np.exp(-alpha * (k_o - k_n)), k_n, w_n)
                 # if np.random.random() < np.exp(s[box_o] - s[box_n]):
-                if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[box_o] - s[box_n]):
-
+                if frozen > sweep_length/5:
+                    print('resetting frozen')
+                if (np.random.random() < (w_n / w_o) * np.exp(-alpha_o*k_o
+                    +alpha* k_n) * np.exp(s[box_o] - s[box_n])) or (frozen > sweep_length/5):
+                    
+                    alpha_o = alpha
                     box_o = box_n
-                    if np.exp(-alpha*k_n)/w_n != wn[box_o]:
-                        wn[box_o] = (wn[box_o] + np.exp(-alpha*k_n)/w_n) / 2
+                    #if np.exp(-alpha*k_n)/w_n != wn[box_o]:
+                    #    wn[box_o] = (wn[box_o] + np.exp(-alpha*k_n)/w_n) / 2
 
-
+                    frozen =0
                     w_o=w_n
                     k_o=k_n
-
+                else:
+                    if box_o == box_n:
+                        frozen +=1
                 # print(extreme_x, extreme_y, extreme_z, box_o)
 
                 # if (n_ > max_overlaps) and (min_overlaps > 0):
@@ -272,13 +281,13 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3):
         mean = sum(t) / len(t)
         # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
         # print(t, end='\r')
-        print(t)
+        print(t, s)
         # print(wn)
         logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
             counts = 0 * counts
             collect_s.append(s.copy())
-            ds = ds / 2
+            ds = ds / decrease
             logging.info("ds=%e, ds_min=%f, sweep number=%i" % (ds, ds_min, sweep_number))
 
     return collect_s, sweep_number
