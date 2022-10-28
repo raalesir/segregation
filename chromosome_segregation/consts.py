@@ -27,7 +27,7 @@ else:
     RESULTS_FOLDER = RESULTS_FOLDER_BOX
 
 
-RESULTS_SAW = 'results_saw'
+RESULTS_SAW = 'results_saw_wl'
 RESULTS_SEGREGATION_PROVE = 'segregation_prove_simultaneously'
 
 GROW_CACHES_FOLDER = os.path.join(os.path.dirname(__file__), 'grow_caches.txt.gz')

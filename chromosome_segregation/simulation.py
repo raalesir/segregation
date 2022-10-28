@@ -180,7 +180,7 @@ def URW_saw(n, n_steps, box):
 
 
 def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
-        decrease = 2.0):
+        decrease = 2.0, scale_alpha=2.0, shift_alpha=0.0):
     """
     WL  procedure for calculation of SAW enropies inside matroshkas
     """
@@ -205,14 +205,16 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
     sweep_number = 0
     alpha = 0.0
     frozen =0
-    logging.info('alpha is: %f'%alpha)
+    logging.info('scale alpha is: %f'%scale_alpha)
+    logging.info('shifl alpha is: %f' %shift_alpha)
+
     while ds > ds_min:
         sweep_number += 1
         failed_to_grow = 0
         out_of_range = 0
         alpha_o = 0
         for i in range(sweep_length):
-            alpha = np.random.rand()*2 #choice((0,1,2))
+            alpha = (np.random.rand()-shift_alpha)*scale_alpha #choice((0,1,2))
 
             coords_n, w_n, k_n = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
             if len(coords_n) < n:
