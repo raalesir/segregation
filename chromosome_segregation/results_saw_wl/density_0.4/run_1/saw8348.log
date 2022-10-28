@@ -1,0 +1,158 @@
+2022-10-27 12:55:21,220 [INFO] run_saw.<module>:316 running SAWs with the parameters: density=0.4, n_boxes=(6, 4), thicknesses=([3],[3])
+2022-10-27 12:55:21,220 [INFO] run_saw.run:231 calculating maximal number of monomers...
+2022-10-27 12:55:21,220 [INFO] run_saw.run:234 max_n=24
+2022-10-27 12:55:21,220 [INFO] run_saw.run:238 getting cached OR calculating from the scratch..
+2022-10-27 12:55:22,153 [INFO] aux.get_grow_caches:351 shape of existing cache is (145, 25, 25, 25), shape of query is: (25, 25, 25, 25)
+2022-10-27 12:55:22,153 [INFO] run_saw.run:241 done calculating (n,dx,dy,dz) array
+2022-10-27 12:55:22,153 [INFO] run_saw.run:249 boxes: [[6, 3, 3], [5, 3, 3], [4, 3, 3]] for thickness_x=3, thickness_y=3
+2022-10-27 12:55:22,154 [INFO] run_saw.run:264 running WL_saw with n=20,  box=[6, 3, 3]
+2022-10-27 12:55:22,154 [INFO] run_saw.run:273 ([5, 6, 7], [2, 3, 4], [2, 3, 4])
+2022-10-27 12:55:22,154 [INFO] simulation.WL_saw:193 s size is: 3
+2022-10-27 12:55:22,154 [INFO] simulation.WL_saw:194 counts size is: 3
+2022-10-27 12:55:22,154 [INFO] simulation.WL_saw:196 indexes: [0, 1, 2]
+2022-10-27 12:55:22,154 [INFO] simulation.WL_saw:208 scale alpha is: 0.000000
+2022-10-27 12:55:22,154 [INFO] simulation.WL_saw:209 shifl alpha is: -0.200000
+2022-10-27 12:55:26,648 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:55:26,648 [INFO] simulation.WL_saw:293 ds=5.000000e-02, ds_min=0.000001, sweep number=1
+2022-10-27 12:55:31,149 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:55:31,149 [INFO] simulation.WL_saw:293 ds=2.500000e-02, ds_min=0.000001, sweep number=2
+2022-10-27 12:55:35,651 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:55:35,651 [INFO] simulation.WL_saw:293 ds=1.250000e-02, ds_min=0.000001, sweep number=3
+2022-10-27 12:55:40,160 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:55:40,160 [INFO] simulation.WL_saw:293 ds=6.250000e-03, ds_min=0.000001, sweep number=4
+2022-10-27 12:55:44,658 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:55:44,659 [INFO] simulation.WL_saw:293 ds=3.125000e-03, ds_min=0.000001, sweep number=5
+2022-10-27 12:55:49,159 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:55:49,159 [INFO] simulation.WL_saw:293 ds=1.562500e-03, ds_min=0.000001, sweep number=6
+2022-10-27 12:55:53,658 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:55:53,658 [INFO] simulation.WL_saw:293 ds=7.812500e-04, ds_min=0.000001, sweep number=7
+2022-10-27 12:55:58,160 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:55:58,160 [INFO] simulation.WL_saw:293 ds=3.906250e-04, ds_min=0.000001, sweep number=8
+2022-10-27 12:56:02,657 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:56:02,657 [INFO] simulation.WL_saw:293 ds=1.953125e-04, ds_min=0.000001, sweep number=9
+2022-10-27 12:56:07,158 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:56:07,158 [INFO] simulation.WL_saw:293 ds=9.765625e-05, ds_min=0.000001, sweep number=10
+2022-10-27 12:56:11,642 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:56:11,642 [INFO] simulation.WL_saw:293 ds=4.882813e-05, ds_min=0.000001, sweep number=11
+2022-10-27 12:56:16,131 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:16,131 [INFO] simulation.WL_saw:293 ds=2.441406e-05, ds_min=0.000001, sweep number=12
+2022-10-27 12:56:20,617 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:20,617 [INFO] simulation.WL_saw:293 ds=1.220703e-05, ds_min=0.000001, sweep number=13
+2022-10-27 12:56:25,095 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:25,096 [INFO] simulation.WL_saw:293 ds=6.103516e-06, ds_min=0.000001, sweep number=14
+2022-10-27 12:56:29,573 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:29,573 [INFO] simulation.WL_saw:293 ds=3.051758e-06, ds_min=0.000001, sweep number=15
+2022-10-27 12:56:34,036 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:34,036 [INFO] simulation.WL_saw:293 ds=1.525879e-06, ds_min=0.000001, sweep number=16
+2022-10-27 12:56:38,490 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:56:38,490 [INFO] simulation.WL_saw:293 ds=7.629395e-07, ds_min=0.000001, sweep number=17
+2022-10-27 12:56:38,490 [INFO] run_saw.run:277 s: [array([118.7, 119.5, 115.3]), array([176.5 , 177.4 , 173.85]), array([205.225, 205.925, 203.25 ]), array([220.1   , 221.    , 217.8875]), array([227.4625, 228.475 , 224.6625]), array([230.846875, 231.80625 , 228.803125]), array([232.66875  , 233.5796875, 230.6671875]), array([233.59609375, 234.50703125, 231.5796875 ]), array([234.04570312, 234.94882812, 232.07539062]), array([234.27519531, 235.15234375, 232.33300781]), array([234.39443359, 235.25664063, 232.44746094]), array([234.44746094, 235.31142578, 232.50957031]), array([234.47592773, 235.34213867, 232.53601074]), array([234.49118652, 235.3569458 , 232.54885254]), array([234.49824219, 235.36428833, 232.55570068]), array([234.50184937, 235.36787109, 232.55924377]), array([234.5037384 , 235.36979523, 232.56069183])]
+2022-10-27 12:56:38,494 [INFO] run_saw.process_result:212 specific_excess_entropy from the analytical curve  for n=20 is: -0.295
+2022-10-27 12:56:38,494 [INFO] run_saw.process_result:214 the total number of phantom conformation for n=20 is 2.598927e+13
+2022-10-27 12:56:38,494 [INFO] run_saw.process_result:217 number of SAWs for n=20 is 7.072078e+10
+2022-10-27 12:56:38,494 [INFO] run_saw.process_result:220 number of SAWs for n=20 inside the box=[6, 3, 3] is 6.784303e+10
+2022-10-27 12:56:38,494 [INFO] run_saw.process_result:223 specific free energy for n=20 and box=[6, 3, 3] is: -1.247
+2022-10-27 12:56:38,495 [INFO] run_saw.run:264 running WL_saw with n=18,  box=[5, 3, 3]
+2022-10-27 12:56:38,495 [INFO] run_saw.run:273 ([4, 5, 6], [2, 3, 4], [2, 3, 4])
+2022-10-27 12:56:38,495 [INFO] simulation.WL_saw:193 s size is: 3
+2022-10-27 12:56:38,495 [INFO] simulation.WL_saw:194 counts size is: 3
+2022-10-27 12:56:38,495 [INFO] simulation.WL_saw:196 indexes: [0, 1, 2]
+2022-10-27 12:56:38,495 [INFO] simulation.WL_saw:208 scale alpha is: 0.000000
+2022-10-27 12:56:38,495 [INFO] simulation.WL_saw:209 shifl alpha is: -0.200000
+2022-10-27 12:56:42,475 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:42,475 [INFO] simulation.WL_saw:293 ds=5.000000e-02, ds_min=0.000001, sweep number=1
+2022-10-27 12:56:46,466 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:56:46,466 [INFO] simulation.WL_saw:293 ds=2.500000e-02, ds_min=0.000001, sweep number=2
+2022-10-27 12:56:50,458 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:56:50,458 [INFO] simulation.WL_saw:293 ds=1.250000e-02, ds_min=0.000001, sweep number=3
+2022-10-27 12:56:54,447 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:56:54,447 [INFO] simulation.WL_saw:293 ds=6.250000e-03, ds_min=0.000001, sweep number=4
+2022-10-27 12:56:58,436 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:56:58,437 [INFO] simulation.WL_saw:293 ds=3.125000e-03, ds_min=0.000001, sweep number=5
+2022-10-27 12:57:02,422 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:02,422 [INFO] simulation.WL_saw:293 ds=1.562500e-03, ds_min=0.000001, sweep number=6
+2022-10-27 12:57:06,407 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:57:10,387 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:10,388 [INFO] simulation.WL_saw:293 ds=7.812500e-04, ds_min=0.000001, sweep number=8
+2022-10-27 12:57:14,373 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:18,345 [INFO] simulation.WL_saw:288 failed to grow rate: 30%, out of range:  0% 
+2022-10-27 12:57:18,345 [INFO] simulation.WL_saw:293 ds=3.906250e-04, ds_min=0.000001, sweep number=10
+2022-10-27 12:57:22,331 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:22,331 [INFO] simulation.WL_saw:293 ds=1.953125e-04, ds_min=0.000001, sweep number=11
+2022-10-27 12:57:26,327 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:57:26,327 [INFO] simulation.WL_saw:293 ds=9.765625e-05, ds_min=0.000001, sweep number=12
+2022-10-27 12:57:30,314 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:30,314 [INFO] simulation.WL_saw:293 ds=4.882813e-05, ds_min=0.000001, sweep number=13
+2022-10-27 12:57:34,301 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:57:38,284 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:38,284 [INFO] simulation.WL_saw:293 ds=2.441406e-05, ds_min=0.000001, sweep number=15
+2022-10-27 12:57:42,271 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:57:46,256 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:50,251 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:50,252 [INFO] simulation.WL_saw:293 ds=1.220703e-05, ds_min=0.000001, sweep number=18
+2022-10-27 12:57:54,231 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:57:54,231 [INFO] simulation.WL_saw:293 ds=6.103516e-06, ds_min=0.000001, sweep number=19
+2022-10-27 12:57:58,208 [INFO] simulation.WL_saw:288 failed to grow rate: 31%, out of range:  0% 
+2022-10-27 12:58:02,197 [INFO] simulation.WL_saw:288 failed to grow rate: 29%, out of range:  0% 
+2022-10-27 12:58:02,197 [INFO] simulation.WL_saw:293 ds=3.051758e-06, ds_min=0.000001, sweep number=21
+2022-10-27 12:58:06,188 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:58:06,189 [INFO] simulation.WL_saw:293 ds=1.525879e-06, ds_min=0.000001, sweep number=22
+2022-10-27 12:58:10,179 [INFO] simulation.WL_saw:288 failed to grow rate: 28%, out of range:  0% 
+2022-10-27 12:58:10,180 [INFO] simulation.WL_saw:293 ds=7.629395e-07, ds_min=0.000001, sweep number=23
+2022-10-27 12:58:10,180 [INFO] run_saw.run:277 s: [array([118. , 118.6, 114.2]), array([179.6, 180.1, 168.1]), array([206.475, 206.875, 203.35 ]), array([221.2125, 221.575 , 217.9625]), array([229.13125, 229.225  , 224.7125 ]), array([233.034375, 233.13125 , 227.990625]), array([236.3140625, 236.54375  , 232.4671875]), array([238.27578125, 238.5109375 , 234.06328125]), array([238.68046875, 238.90039062, 234.66484375]), array([238.88789062, 239.09863281, 234.965625  ]), array([239.01767578, 239.2203125 , 235.06074219]), array([239.12607422, 239.32905273, 235.19301758]), array([239.20083008, 239.40358887, 235.30541992]), array([239.21405029, 239.41779785, 235.32122803]), array([239.22909546, 239.43256836, 235.33424072]), array([239.23282776, 239.43615723, 235.33783875]), array([239.23437042, 239.43784637, 235.34006805])]
+2022-10-27 12:58:10,183 [INFO] run_saw.process_result:212 specific_excess_entropy from the analytical curve  for n=18 is: -0.299
+2022-10-27 12:58:10,184 [INFO] run_saw.process_result:214 the total number of phantom conformation for n=18 is 8.420905e+11
+2022-10-27 12:58:10,184 [INFO] run_saw.process_result:217 number of SAWs for n=18 is 3.898134e+09
+2022-10-27 12:58:10,184 [INFO] run_saw.process_result:220 number of SAWs for n=18 inside the box=[5, 3, 3] is 3.862802e+09
+2022-10-27 12:58:10,184 [INFO] run_saw.process_result:223 specific free energy for n=18 and box=[5, 3, 3] is: -1.226
+2022-10-27 12:58:10,184 [INFO] run_saw.run:264 running WL_saw with n=14,  box=[4, 3, 3]
+2022-10-27 12:58:10,184 [INFO] run_saw.run:273 ([3, 4, 5], [2, 3, 4], [2, 3, 4])
+2022-10-27 12:58:10,184 [INFO] simulation.WL_saw:193 s size is: 3
+2022-10-27 12:58:10,184 [INFO] simulation.WL_saw:194 counts size is: 3
+2022-10-27 12:58:10,184 [INFO] simulation.WL_saw:196 indexes: [0, 1, 2]
+2022-10-27 12:58:10,184 [INFO] simulation.WL_saw:208 scale alpha is: 0.000000
+2022-10-27 12:58:10,185 [INFO] simulation.WL_saw:209 shifl alpha is: -0.200000
+2022-10-27 12:58:13,263 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:13,263 [INFO] simulation.WL_saw:293 ds=5.000000e-02, ds_min=0.000001, sweep number=1
+2022-10-27 12:58:16,349 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:16,350 [INFO] simulation.WL_saw:293 ds=2.500000e-02, ds_min=0.000001, sweep number=2
+2022-10-27 12:58:19,444 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:19,444 [INFO] simulation.WL_saw:293 ds=1.250000e-02, ds_min=0.000001, sweep number=3
+2022-10-27 12:58:22,525 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:22,525 [INFO] simulation.WL_saw:293 ds=6.250000e-03, ds_min=0.000001, sweep number=4
+2022-10-27 12:58:25,605 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:25,605 [INFO] simulation.WL_saw:293 ds=3.125000e-03, ds_min=0.000001, sweep number=5
+2022-10-27 12:58:28,693 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:28,693 [INFO] simulation.WL_saw:293 ds=1.562500e-03, ds_min=0.000001, sweep number=6
+2022-10-27 12:58:31,785 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:31,785 [INFO] simulation.WL_saw:293 ds=7.812500e-04, ds_min=0.000001, sweep number=7
+2022-10-27 12:58:34,869 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:34,869 [INFO] simulation.WL_saw:293 ds=3.906250e-04, ds_min=0.000001, sweep number=8
+2022-10-27 12:58:37,948 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:37,948 [INFO] simulation.WL_saw:293 ds=1.953125e-04, ds_min=0.000001, sweep number=9
+2022-10-27 12:58:41,030 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:44,123 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:47,204 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:47,205 [INFO] simulation.WL_saw:293 ds=9.765625e-05, ds_min=0.000001, sweep number=12
+2022-10-27 12:58:50,290 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:50,290 [INFO] simulation.WL_saw:293 ds=4.882813e-05, ds_min=0.000001, sweep number=13
+2022-10-27 12:58:53,379 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:53,379 [INFO] simulation.WL_saw:293 ds=2.441406e-05, ds_min=0.000001, sweep number=14
+2022-10-27 12:58:56,453 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:58:56,453 [INFO] simulation.WL_saw:293 ds=1.220703e-05, ds_min=0.000001, sweep number=15
+2022-10-27 12:58:59,525 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:58:59,525 [INFO] simulation.WL_saw:293 ds=6.103516e-06, ds_min=0.000001, sweep number=16
+2022-10-27 12:59:02,594 [INFO] simulation.WL_saw:288 failed to grow rate: 27%, out of range:  0% 
+2022-10-27 12:59:05,666 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:59:05,666 [INFO] simulation.WL_saw:293 ds=3.051758e-06, ds_min=0.000001, sweep number=18
+2022-10-27 12:59:08,745 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:59:08,745 [INFO] simulation.WL_saw:293 ds=1.525879e-06, ds_min=0.000001, sweep number=19
+2022-10-27 12:59:11,816 [INFO] simulation.WL_saw:288 failed to grow rate: 26%, out of range:  0% 
+2022-10-27 12:59:11,816 [INFO] simulation.WL_saw:293 ds=7.629395e-07, ds_min=0.000001, sweep number=20
+2022-10-27 12:59:11,816 [INFO] run_saw.run:277 s: [array([133.7, 131.1, 104.8]), array([189.4 , 188.2 , 177.05]), array([221.5  , 219.25 , 206.775]), array([234.1875, 232.5625, 226.35  ]), array([241.04375, 239.925  , 235.06875]), array([244.865625, 243.340625, 239.35625 ]), array([246.925    , 245.375    , 241.0734375]), array([247.79765625, 246.2515625 , 242.190625  ]), array([248.32382812, 246.75859375, 242.578125  ]), array([248.98105469, 247.45039063, 243.38496094]), array([249.09316406, 247.56708984, 243.51777344]), array([249.15908203, 247.6277832 , 243.57084961]), array([249.19047852, 247.66101074, 243.59528809]), array([249.20390625, 247.67716064, 243.61087646]), array([249.21679077, 247.69130249, 243.62851563]), array([249.22035217, 247.69546814, 243.63207092]), array([249.22245331, 247.69746094, 243.63358917])]
+2022-10-27 12:59:11,820 [INFO] run_saw.process_result:212 specific_excess_entropy from the analytical curve  for n=14 is: -0.307
+2022-10-27 12:59:11,820 [INFO] run_saw.process_result:214 the total number of phantom conformation for n=14 is 9.363697e+08
+2022-10-27 12:59:11,820 [INFO] run_saw.process_result:217 number of SAWs for n=14 is 1.273640e+07
+2022-10-27 12:59:11,820 [INFO] run_saw.process_result:220 number of SAWs for n=14 inside the box=[4, 3, 3] is 1.269741e+07
+2022-10-27 12:59:11,820 [INFO] run_saw.process_result:223 specific free energy for n=14 and box=[4, 3, 3] is: -1.168
+2022-10-27 12:59:11,841 [WARNING] legend._parse_legend_args:1217 No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
