@@ -22,7 +22,7 @@ except:
 
 import  matplotlib.pyplot as plt
 
-from statistics import Counter
+from collections import Counter
 
 
 import  logging

@@ -12,7 +12,7 @@ from scipy.optimize import curve_fit
 
 import matplotlib.pyplot as plt
 import  statistics
-from statistics import  Counter
+from collections import  Counter
 
 try:
     import consts
