@@ -24,7 +24,7 @@ except:
 
 import  matplotlib.pyplot as plt
 
-from statistics import Counter
+from collections import Counter
 
 
 import  logging
@@ -273,7 +273,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
         #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
         logging.info('getting cached OR calculating from the scratch..')
         consts.caches = get_grow_caches(fname = GROW_CACHES_FOLDER ,
-                params=(max_n+1, 50,50,50))
+                params=(max_n+1, 60,60,60))
         logging.info('done calculating (n,dx,dy,dz) array')
         total_results = []
         total_results1 = []
@@ -351,7 +351,7 @@ if __name__ == "__main__":
             )
 
     density = 0.4
-    n_boxes = (19,19)
+    n_boxes = (20,20)
     #n_boxes = 7
 
     thicknesses_x = list(range(4, 5))
