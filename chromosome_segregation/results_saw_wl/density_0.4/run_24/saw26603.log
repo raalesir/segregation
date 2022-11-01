@@ -1,0 +1,222 @@
+2022-10-31 18:27:12,340 [INFO] run_saw.<module>:362 running SAWs with the parameters: density=0.4, n_boxes=(13, 10), thicknesses=([3],[3])
+2022-10-31 18:27:12,340 [INFO] run_saw.run:267 calculating maximal number of monomers...
+2022-10-31 18:27:12,340 [INFO] run_saw.run:270 max_n=50
+2022-10-31 18:27:12,340 [INFO] run_saw.run:274 getting cached OR calculating from the scratch..
+2022-10-31 18:27:17,798 [INFO] aux.get_grow_caches:351 shape of existing cache is (129, 50, 50, 50), shape of query is: (51, 50, 50, 50)
+2022-10-31 18:27:17,799 [INFO] run_saw.run:277 done calculating (n,dx,dy,dz) array
+2022-10-31 18:27:17,799 [INFO] run_saw.run:285 boxes: [[13, 3, 3], [12, 3, 3], [11, 3, 3], [10, 3, 3]] for thickness_x=3, thickness_y=3
+2022-10-31 18:27:17,799 [INFO] run_saw.run:294 running WL_saw with n=46,  box=[13, 3, 3]
+2022-10-31 18:27:17,799 [INFO] run_saw.run:306 ([12, 13, 14, 15, 16, 17], [2, 3, 4, 5, 6, 7], [2, 3, 4, 5, 6, 7])
+2022-10-31 18:27:17,799 [INFO] run_saw.run:313 {'extend_to_left': 1, 'extend_to_right': 4, 'flatness': 0.3, 'scale_alpha': 1.0, 'ds_min': 1e-06}
+2022-10-31 18:27:17,799 [INFO] simulation.WL_saw:193 s size is: 6
+2022-10-31 18:27:17,799 [INFO] simulation.WL_saw:194 counts size is: 6
+2022-10-31 18:27:17,799 [INFO] simulation.WL_saw:196 indexes: [0, 1, 2, 3, 4, 5]
+2022-10-31 18:27:17,799 [INFO] simulation.WL_saw:208 scale alpha is: 1.000000
+2022-10-31 18:27:17,799 [INFO] simulation.WL_saw:209 shifl alpha is: -0.000000
+2022-10-31 18:27:28,805 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:27:39,812 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:27:39,812 [INFO] simulation.WL_saw:293 ds=5.000000e-02, ds_min=0.000001, sweep number=2
+2022-10-31 18:27:51,129 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:27:51,129 [INFO] simulation.WL_saw:293 ds=2.500000e-02, ds_min=0.000001, sweep number=3
+2022-10-31 18:28:02,411 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:28:13,632 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:28:24,917 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:28:24,917 [INFO] simulation.WL_saw:293 ds=1.250000e-02, ds_min=0.000001, sweep number=6
+2022-10-31 18:28:36,129 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:28:47,418 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:28:58,615 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:28:58,615 [INFO] simulation.WL_saw:293 ds=6.250000e-03, ds_min=0.000001, sweep number=9
+2022-10-31 18:29:09,856 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:29:20,879 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:29:31,911 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:29:31,911 [INFO] simulation.WL_saw:293 ds=3.125000e-03, ds_min=0.000001, sweep number=12
+2022-10-31 18:29:43,228 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:29:54,466 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:30:05,700 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:30:17,115 [INFO] simulation.WL_saw:288 failed to grow rate: 54%, out of range:  0% 
+2022-10-31 18:30:17,115 [INFO] simulation.WL_saw:293 ds=1.562500e-03, ds_min=0.000001, sweep number=16
+2022-10-31 18:30:28,556 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:30:39,938 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:30:51,271 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:31:02,280 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:31:02,280 [INFO] simulation.WL_saw:293 ds=7.812500e-04, ds_min=0.000001, sweep number=20
+2022-10-31 18:31:13,612 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:31:24,999 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:31:36,285 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:31:47,547 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:31:58,761 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:32:09,984 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:32:21,240 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:32:32,500 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:32:43,793 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:32:54,925 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:33:06,267 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:33:17,626 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:33:28,975 [INFO] simulation.WL_saw:288 failed to grow rate: 54%, out of range:  0% 
+2022-10-31 18:33:40,360 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:33:51,660 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:34:02,971 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:34:14,275 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:34:25,440 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:34:36,453 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:34:36,453 [INFO] simulation.WL_saw:293 ds=3.906250e-04, ds_min=0.000001, sweep number=39
+2022-10-31 18:34:47,878 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:34:58,901 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:35:09,942 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:35:20,984 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:35:32,019 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:35:43,323 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:35:54,643 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:36:05,937 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:36:17,304 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:36:28,693 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:36:28,693 [INFO] simulation.WL_saw:293 ds=1.953125e-04, ds_min=0.000001, sweep number=49
+2022-10-31 18:36:40,070 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:36:51,395 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:37:02,778 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:37:14,017 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:37:25,253 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:37:36,528 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:37:47,815 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:37:59,191 [INFO] simulation.WL_saw:288 failed to grow rate: 54%, out of range:  0% 
+2022-10-31 18:38:10,577 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:38:22,045 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:38:33,119 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:38:44,462 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:38:55,833 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:39:06,981 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:39:18,006 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:39:29,363 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:39:40,391 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:39:51,747 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:40:03,041 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:40:14,350 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:40:25,720 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:40:37,044 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:40:48,344 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:40:59,762 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:41:11,034 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:41:22,445 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:41:33,649 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:41:44,899 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:41:55,932 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:42:07,243 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:42:18,563 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:42:29,937 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:42:41,321 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:42:41,321 [INFO] simulation.WL_saw:293 ds=9.765625e-05, ds_min=0.000001, sweep number=82
+2022-10-31 18:42:52,695 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:43:04,005 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:43:15,027 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:43:26,431 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:43:37,423 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:43:48,802 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:44:00,289 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:44:11,372 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:44:22,778 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:44:33,804 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:44:45,224 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:44:45,224 [INFO] simulation.WL_saw:293 ds=4.882813e-05, ds_min=0.000001, sweep number=93
+2022-10-31 18:44:56,567 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:45:07,737 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:45:19,126 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:45:30,478 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:45:41,871 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:45:53,249 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:46:04,657 [INFO] simulation.WL_saw:288 failed to grow rate: 54%, out of range:  0% 
+2022-10-31 18:46:16,019 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:46:27,400 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:46:38,717 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:46:50,077 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:47:01,501 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:47:12,909 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:47:24,277 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:47:35,668 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:47:47,116 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:47:58,576 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:48:09,637 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:48:21,009 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:48:21,009 [INFO] simulation.WL_saw:293 ds=2.441406e-05, ds_min=0.000001, sweep number=112
+2022-10-31 18:48:32,112 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:48:43,507 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:48:54,865 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:49:06,246 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:49:06,246 [INFO] simulation.WL_saw:293 ds=1.220703e-05, ds_min=0.000001, sweep number=116
+2022-10-31 18:49:17,568 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:49:28,924 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:49:40,332 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:49:51,719 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:50:03,027 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:50:14,276 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:50:25,609 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:50:36,860 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:50:48,112 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:50:59,442 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:51:10,758 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:51:10,758 [INFO] simulation.WL_saw:293 ds=6.103516e-06, ds_min=0.000001, sweep number=127
+2022-10-31 18:51:21,813 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:51:33,124 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:51:44,411 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:51:55,458 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:52:06,776 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:52:18,084 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:52:29,421 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:52:40,441 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:52:51,678 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:53:02,959 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:53:14,401 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:53:14,402 [INFO] simulation.WL_saw:293 ds=3.051758e-06, ds_min=0.000001, sweep number=138
+2022-10-31 18:53:25,407 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:53:36,849 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:53:48,126 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:53:59,408 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:53:59,409 [INFO] simulation.WL_saw:293 ds=1.525879e-06, ds_min=0.000001, sweep number=142
+2022-10-31 18:54:10,646 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:54:21,929 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:54:33,219 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:54:44,490 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:54:55,781 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:55:07,017 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:55:18,295 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:55:29,604 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:55:40,613 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:55:51,984 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:56:03,255 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:56:14,447 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:56:25,736 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:56:37,075 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:56:48,408 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:56:59,427 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:57:10,437 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:57:21,449 [INFO] simulation.WL_saw:288 failed to grow rate: 58%, out of range:  0% 
+2022-10-31 18:57:32,784 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:57:43,887 [INFO] simulation.WL_saw:288 failed to grow rate: 55%, out of range:  0% 
+2022-10-31 18:57:54,884 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:58:06,157 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:58:17,170 [INFO] simulation.WL_saw:288 failed to grow rate: 57%, out of range:  0% 
+2022-10-31 18:58:28,202 [INFO] simulation.WL_saw:288 failed to grow rate: 56%, out of range:  0% 
+2022-10-31 18:58:28,203 [INFO] simulation.WL_saw:293 ds=7.629395e-07, ds_min=0.000001, sweep number=166
+2022-10-31 18:58:28,203 [INFO] run_saw.run:317 s: [array([56.1, 73.3, 78.9, 77.7, 77.5, 74.7]), array([76.05, 93.25, 96.65, 95.6 , 94.75, 92.4 ]), array([106.75 , 120.7  , 123.5  , 123.575, 122.575, 118.95 ]), array([124.3125, 133.1   , 136.3625, 136.3875, 135.    , 133.2875]), array([130.3875 , 139.83125, 143.3    , 144.6375 , 141.7    , 139.70625]), array([135.40625 , 144.775   , 147.709375, 148.0875  , 147.090625,
+       144.4125  ]), array([137.7984375, 147.053125 , 149.909375 , 150.4125   , 149.425    ,
+       146.44375  ]), array([142.58984375, 152.74609375, 155.80625   , 156.03828125,
+       154.99453125, 151.54140625]), array([144.37109375, 153.84257812, 156.96210937, 157.21835937,
+       156.63007812, 153.27070312]), array([146.12421875, 156.36777344, 159.40332031, 159.89179688,
+       158.72285156, 155.95996094]), array([146.61464844, 156.76835938, 159.75615234, 160.18310547,
+       159.07988281, 156.41210938]), array([147.0371582 , 157.07304688, 160.11469727, 160.5362793 ,
+       159.40239258, 156.69780273]), array([147.0684082 , 157.10754395, 160.16081543, 160.57324219,
+       159.43935547, 156.72697754]), array([147.11699219, 157.16676025, 160.20615234, 160.61378174,
+       159.50168457, 156.76812744]), array([147.13979492, 157.193573  , 160.22752075, 160.64569092,
+       159.52264404, 156.79237061]), array([147.14450073, 157.19901428, 160.23291016, 160.6500885 ,
+       159.52615356, 156.79601135]), array([147.15713959, 157.21097717, 160.24661255, 160.66216888,
+       159.53872833, 156.81340027])]
+2022-10-31 18:58:28,207 [INFO] run_saw.get_n_saws:235 specific_excess_entropy from the analytical curve  for n=46 is: -0.274
+2022-10-31 18:58:28,208 [INFO] run_saw.get_n_saws:237 the total number of phantom conformation for n=46 is 1.297805e+33
+2022-10-31 18:58:28,209 [INFO] run_saw.run:322 saving results
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:199 saving results to: /home/alexey/projects/chromosome_segregation/chromosome_segregation/results_saw_wl/density_0.4/run_24/data.csv
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:203 saving the line: 4,0.958,-1.074
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:203 saving the line: 9,0.393,-1.293
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:203 saving the line: 16,0.205,-1.36
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:203 saving the line: 25,0.123,-1.379
+2022-10-31 18:58:28,209 [INFO] run_saw.save_results:203 saving the line: 36,0.08,-1.383
+2022-10-31 18:58:28,210 [INFO] run_saw.save_results:203 saving the line: 49,0.055,-1.383
+2022-10-31 18:58:28,210 [INFO] run_saw.save_results:207 saving parameters to /home/alexey/projects/chromosome_segregation/chromosome_segregation/results_saw_wl/density_0.4/run_24/params.json
