@@ -283,7 +283,9 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
         mean = sum(t) / len(t)
         # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
         # print(t, end='\r')
-        print(t, s)
+        logging.info("visits %s" %t)
+        logging.info("S %s" %s)
+        #print(t, s)
         # print(wn)
         logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):

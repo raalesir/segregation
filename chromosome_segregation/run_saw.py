@@ -224,6 +224,10 @@ def process_results_full(s, indexes, n, n_saws):
     x, y, z = indexes[0], indexes[1], indexes[2]
     
     for i in range(len(omega)):
+        logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n, str((x[i],y[i], z[i])), fractions[i] * n_saws))
+        specific_free_energy_for_box = -np.log( fractions[i] * n_saws) /n
+        logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, str((x[i],y[i], z[i])), specific_free_energy_for_box))
+     
         res.append(
             (n, y[i]*z[i], round(n/x[i]/y[i]/z[i], 3),  -round(np.log(n_saws *fractions[i])/n, 3))
         )
@@ -273,7 +277,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
         #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
         logging.info('getting cached OR calculating from the scratch..')
         consts.caches = get_grow_caches(fname = GROW_CACHES_FOLDER ,
-                params=(max_n+1, 60,60,60))
+                params=(max_n+1, 80,80,80))
         logging.info('done calculating (n,dx,dy,dz) array')
         total_results = []
         total_results1 = []
@@ -296,9 +300,9 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     # all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
 
                     extend_to_left = 1
-                    extend_to_right = 7
+                    extend_to_right = 10
                     flatness = 0.3
-                    scale_alpha = 3.5
+                    scale_alpha = 5.5
                     ds_min = 0.000001
                     indexes = aux.get_indexes(boxes[i],
                             extend_to_left=extend_to_left,
@@ -351,7 +355,7 @@ if __name__ == "__main__":
             )
 
     density = 0.4
-    n_boxes = (20,20)
+    n_boxes = (25,25)
     #n_boxes = 7
 
     thicknesses_x = list(range(4, 5))
