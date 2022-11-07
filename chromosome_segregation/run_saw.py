@@ -242,6 +242,7 @@ def get_n_saws(n):
     saw_fraction = np.exp(specific_excess_entropy * n)
     n_saws = saw_fraction * n_conformations_total
 
+    logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
     return n_saws
 
 
@@ -302,7 +303,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     extend_to_left = 1
                     extend_to_right = 10
                     flatness = 0.3
-                    scale_alpha = 5.5
+                    scale_alpha = 3.0
                     ds_min = 0.000001
                     indexes = aux.get_indexes(boxes[i],
                             extend_to_left=extend_to_left,

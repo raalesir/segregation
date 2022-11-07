@@ -256,7 +256,8 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
                     k_o=k_n
                 else:
                     if box_o == box_n:
-                        frozen +=1
+                       pass
+#                        frozen +=1
                 # print(extreme_x, extreme_y, extreme_z, box_o)
 
                 # if (n_ > max_overlaps) and (min_overlaps > 0):
