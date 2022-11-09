@@ -8,7 +8,7 @@ import shutil
 LOG_FILE="saw"+str(os.getpid())+".log"
 
 try:
-    from  chromosome_segregation.simulation import URW_saw,WL_saw
+    from  chromosome_segregation.simulation import URW_saw,WL_saw, WL_saw_mpi
     from chromosome_segregation.aux import cache_n_conf, get_grow_caches
 
     from chromosome_segregation  import overlaps
@@ -16,7 +16,7 @@ try:
     from  chromosome_segregation import  consts
     from chromosome_segregation import aux
 except:
-    from simulation import URW_saw, WL_saw
+    from simulation import URW_saw, WL_saw, WL_saw_mpi
     from aux import cache_n_conf, get_grow_caches
     import overlaps
     import consts
@@ -302,9 +302,12 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
                     extend_to_left = 1
                     extend_to_right = 10
-                    flatness = 0.3
-                    scale_alpha = 3.0
+                    flatness = 0.2
+                    scale_alpha = 4.0
                     ds_min = 0.000001
+                    decrease = 1.5
+                    sweep_length = 1000
+
                     indexes = aux.get_indexes(boxes[i],
                             extend_to_left=extend_to_left,
                             extend_to_right=extend_to_right, length=30)
@@ -313,11 +316,11 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     parameters = {'extend_to_left':extend_to_left,
                             "extend_to_right":extend_to_right,
                             "flatness":flatness, "scale_alpha":scale_alpha,
-                            "ds_min":ds_min}
+                            "ds_min":ds_min, 'decrease':decrease, 'sweep length':sweep_length}
                         
                     logging.info(parameters)
-                    s, sweep_number =  WL_saw(n, indexes, sweep_length=5000,
-                            ds_min=ds_min, flatness=flatness, decrease=2.0,
+                    s, sweep_number =  WL_saw_mpi(n, indexes, sweep_length=sweep_length,
+                            ds_min=ds_min, flatness=flatness, decrease=decrease,
                             scale_alpha =scale_alpha, shift_alpha=-0.0)
                     logging.info('s: %s', s)
 
