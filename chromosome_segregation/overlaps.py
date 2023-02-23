@@ -25,7 +25,9 @@ class Overlap:
         self.n_conformations = self.n_conform()
         self.overlaps_hist = None
         self.indexes = self.calculate_steps()
+        # print('self.indexes created')
         self.dict = self.make_steps()
+        print('self.dict is calculated. the length is %i'%len(self.indexes))
         self.encoded_conformations = None
 
     #         self.keep_result = []
@@ -132,10 +134,13 @@ class Overlap:
     def calculate_all_conformations(self):
         Overlap.keep_result.all = []
 
+        i = 0
         for entry in self.dict:
             # generating trajectory representation  for each combination
+            print('working with %i entry out of %i' %(i, len(self.dict)))
             self.fun(entry, '')
             # print(Overlap.keep_result.all)
+            i +=1
 
 
     def encode_single_conformation(self, conformation):
@@ -167,32 +172,65 @@ class Overlap:
         return conf_encoded
 
 
+    def tmpfun(self, conformation):
+        """
+
+        :return:
+        :rtype:
+        """
+
+        conf_encoded = []
+        start = [0, 0, 0]
+        for symbol in [conformation[i:i + 2] for i in range(0, len(conformation), 2)]:
+            if symbol == 'k+':
+                start[2] += 1
+            elif symbol == 'k-':
+                start[2] -= 1
+            elif symbol == 'i+':
+                start[0] += 1
+            elif symbol == 'i-':
+                start[0] -= 1
+            elif symbol == 'j+':
+                start[1] += 1
+            elif symbol == 'j-':
+                start[1] -= 1
+            conf_encoded.append(tuple(start.copy()))
+
+        return conf_encoded
+
+
     def encode_to_coords(self):
         """
         encodes string conformation representation to the numeric representation
         e.g. 'i+i+i-i-' --> [ (1,0,0), (2,0,0), (1,0,0), (0,0,0) ]
         """
-        res = []
-        for conformation in Overlap.keep_result.all:
-            conf_encoded = []
-            start = [0, 0, 0]
-            for symbol in [conformation[i:i + 2] for i in range(0, len(conformation), 2)]:
-                if symbol == 'k+':
-                    start[2] += 1
-                elif symbol == 'k-':
-                    start[2] -= 1
-                elif symbol == 'i+':
-                    start[0] += 1
-                elif symbol == 'i-':
-                    start[0] -= 1
-                elif symbol == 'j+':
-                    start[1] += 1
-                elif symbol == 'j-':
-                    start[1] -= 1
-                conf_encoded.append(tuple(start.copy()))
-
-            res.append(conf_encoded)
-        self.encoded_conformations = res
+        # res = []
+        # i = 0
+        # all_confs = len(Overlap.keep_result.all)
+        # for conformation in Overlap.keep_result.all:
+        #     # if i % 100000 == 0:
+        #     #     print('passed %f ' % (i/all_confs*100))
+        #     # i+=1
+        #     conf_encoded = self.tmpfun(conformation)
+        #     # start = [0, 0, 0]
+        #     # for symbol in [conformation[i:i + 2] for i in range(0, len(conformation), 2)]:
+        #     #     if symbol == 'k+':
+        #     #         start[2] += 1
+        #     #     elif symbol == 'k-':
+        #     #         start[2] -= 1
+        #     #     elif symbol == 'i+':
+        #     #         start[0] += 1
+        #     #     elif symbol == 'i-':
+        #     #         start[0] -= 1
+        #     #     elif symbol == 'j+':
+        #     #         start[1] += 1
+        #     #     elif symbol == 'j-':
+        #     #         start[1] -= 1
+        #     #     conf_encoded.append(tuple(start.copy()))
+        #
+        #     res.append(conf_encoded)
+        res = (self.tmpfun(conformation) for conformation in Overlap.keep_result.all)
+        return res
 
 
 
@@ -216,7 +254,11 @@ class Overlap:
         if not os.path.isfile(fname):
 
             self.calculate_all_conformations() # all confs are encoded as a list of strings like 'i+i+i-i-'
-            self.encode_to_coords()
+            print('all confs generated')
+            print('there are: %i confs'%len(Overlap.keep_result.all))
+            print('encoding to coords')
+            self.encoded_conformations = self.encode_to_coords()
+            print('done encoding to coords')
             self.get_overlaps()
 
         else:
@@ -245,8 +287,9 @@ class Overlap:
 
 if __name__=="__main__":
 
-    overlaps = Overlap(8)
+    overlaps = Overlap(12)
     print(overlaps)
+    print('calculating trajectories')
 
     print(overlaps.get_overlaps_histogram())
 
