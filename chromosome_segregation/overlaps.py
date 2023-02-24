@@ -330,6 +330,9 @@ class Overlap:
         if not os.path.isfile(fname):
             json.dump(self.overlaps_hist, open(fname, 'w'))
 
+        fname = "contacts_%i.json" % (self.n)
+        if not os.path.isfile(fname):
+            json.dump(self.numbers_of_contact, open(fname, 'w'))
 
     def plot_overlaps_histogram(self):
 
@@ -343,7 +346,7 @@ class Overlap:
 
 if __name__=="__main__":
 
-    overlaps = Overlap(14)
+    overlaps = Overlap(10)
     print(overlaps)
     print('calculating trajectories')
 
