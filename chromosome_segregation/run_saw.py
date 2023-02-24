@@ -8,7 +8,7 @@ import shutil
 LOG_FILE="saw"+str(os.getpid())+".log"
 
 try:
-    from  chromosome_segregation.simulation import URW_saw,WL_saw, WL_saw_mpi
+    from  chromosome_segregation.simulation import URW_saw,WL_saw, WL_saw_mpi_fast
     from chromosome_segregation.aux import cache_n_conf, get_grow_caches
 
     from chromosome_segregation  import overlaps
@@ -16,7 +16,7 @@ try:
     from  chromosome_segregation import  consts
     from chromosome_segregation import aux
 except:
-    from simulation import URW_saw, WL_saw, WL_saw_mpi
+    from simulation import URW_saw, WL_saw, WL_saw_mpi_fast
     from aux import cache_n_conf, get_grow_caches
     import overlaps
     import consts
@@ -30,7 +30,8 @@ from collections import Counter
 import  logging
 
 
-RESULTS_FOLDER = os.path.join(os.path.dirname(consts.__file__), consts.RESULTS_SAW)
+RESULTS_FOLDER = os.path.join(os.path.dirname(consts.__file__), consts.RESULTS_SAW_WL)
+#RESULTS_FOLDER = os.path.join(os.path.dirname(consts.__file__), consts.RESULTS_FANTOM)
 GROW_CACHES_FOLDER = os.path.join(os.path.dirname(consts.__file__), 'grow_caches.txt.gz')
 
 
@@ -293,6 +294,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
             for i in range(n_boxes[0]-n_boxes[1]+1):
             #for i in range(len(boxes)):
                 n = get_n(boxes[i],density)
+                n = 14
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
 
@@ -301,16 +303,17 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     # all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
 
                     extend_to_left = 1
-                    extend_to_right = 10
+                    extend_to_right = 13
                     flatness = 0.2
-                    scale_alpha = 4.0
-                    ds_min = 0.000001
-                    decrease = 1.5
+                    scale_alpha = 0.0
+                    ds_min = 0.0000001
+                    decrease = 2.0
                     sweep_length = 1000
 
                     indexes = aux.get_indexes(boxes[i],
                             extend_to_left=extend_to_left,
                             extend_to_right=extend_to_right, length=30)
+                    #indexes = aux.update_indexes(indexes)
                     logging.info(indexes)
 
                     parameters = {'extend_to_left':extend_to_left,
@@ -319,7 +322,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                             "ds_min":ds_min, 'decrease':decrease, 'sweep length':sweep_length}
                         
                     logging.info(parameters)
-                    s, sweep_number =  WL_saw_mpi(n, indexes, sweep_length=sweep_length,
+                    s, sweep_number =  WL_saw_mpi_fast(n, indexes, sweep_length=sweep_length,
                             ds_min=ds_min, flatness=flatness, decrease=decrease,
                             scale_alpha =scale_alpha, shift_alpha=-0.0)
                     logging.info('s: %s', s)
@@ -335,7 +338,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     specific_free_energy = process_result(distribution=s[-1], box = boxes[i], start_from=extend_to_left, density=density)
                     # specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
 
-                    total_results1.append( (*boxes[i], specific_free_energy, n,s[-1]) )
+                    #total_results1.append( (*boxes[i], specific_free_energy, n,s[-1]) )
                     # results.append(list_to_arr(all_boxes))
 
                     # total_results.append(results)
@@ -348,9 +351,9 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
 
 if __name__ == "__main__":
-
+    np.set_printoptions(precision=4)
     logging.basicConfig(
-                level=logging.INFO,
+                level=logging.DEBUG,
                 format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",
                 handlers=[
                     logging.FileHandler(LOG_FILE),
@@ -359,10 +362,10 @@ if __name__ == "__main__":
             )
 
     density = 0.4
-    n_boxes = (25,25)
+    n_boxes = (7,7)
     #n_boxes = 7
 
-    thicknesses_x = list(range(4, 5))
+    thicknesses_x = list(range(7, 8))
     thicknesses_y = [el  for el in thicknesses_x]
 
     #logging.info("running SAWs with the parameters: density=%3.1f, n_boxes=%i, thicknesses=(%s,%s)" %
