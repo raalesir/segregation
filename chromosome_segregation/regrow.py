@@ -260,7 +260,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
             print('SELECTED NOT POSSIBLE')
 
         k += collect_closeness_to_axis[selected]
-        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native, box, indexes)
+        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native)
 
 
 def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
