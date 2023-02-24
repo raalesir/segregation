@@ -122,12 +122,9 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
-<<<<<<< HEAD
-def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native, box ,indexes):
-=======
+
 
 def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
->>>>>>> 2ce3e92646d0513bfd2b56f1c58ee3004319f4bd
     """
     recursive  regrow for SAW only.
     """
