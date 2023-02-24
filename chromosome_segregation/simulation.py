@@ -721,7 +721,7 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
            # else:
             #    alpha = alphas[rank]
 
-            coords_n, w_n, k_n, probability, probability_native  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=0, box = indexes_[-1], indexes=indexes)
+            coords_n, w_n, k_n, probability, probability_native  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=0)
             if len(coords_n) < n:
                 failed_to_grow += 1
             # print('skipping, failed to grow')
