@@ -206,7 +206,7 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
     alpha = 0.0
     frozen =0
     logging.info('scale alpha is: %f'%scale_alpha)
-    logging.info('shifl alpha is: %f' %shift_alpha)
+    logging.info('shift alpha is: %f' %shift_alpha)
 
     while ds > ds_min:
         sweep_number += 1
@@ -256,22 +256,9 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
                     k_o=k_n
                 else:
                     if box_o == box_n:
-                        frozen +=1
+                       pass
+#                        frozen +=1
                 # print(extreme_x, extreme_y, extreme_z, box_o)
-
-                # if (n_ > max_overlaps) and (min_overlaps > 0):
-                #     n_ = max_overlaps + 1
-                #     if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
-                #         w_o = w_n
-                #         k_o = k_n
-                #         o_ = n_
-                # elif (n_ <= max_overlaps) and (n_ >= min_overlaps):
-                #     n_ = n_ - n_ % grain
-                #     if np.random.random() < (w_n / w_o) * np.exp(-alpha * (k_o - k_n)) * np.exp(s[o_] - s[n_]):
-                #         w_o = w_n
-                #         k_o = k_n
-                #         o_ = n_
-
                 counts[box_o] += 1
                 s[box_o] += ds
                 # if box_o == 1:
@@ -283,7 +270,9 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
         mean = sum(t) / len(t)
         # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
         # print(t, end='\r')
-        print(t, s)
+        logging.info("visits %s" %t)
+        logging.info("S %s" %s)
+        #print(t, s)
         # print(wn)
         logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
         if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
@@ -296,6 +285,164 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
 
 
 
+def WL_saw_mpi(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
+        decrease = 2.0, scale_alpha=2.0, shift_alpha=0.0):
+    """
+    WL  procedure for calculation of SAW enropies inside matroshkas
+    """
+
+    s = np.zeros(len(indexes[0]))
+    counts = np.zeros(s.shape)
+    indexes_ = list(range(len(indexes[0])))
+    wn = np.zeros(s.shape)
+
+    logging.info('s size is: %s' % (s.shape))
+    logging.info('counts size is: %s' % (counts.shape))
+
+    logging.info('indexes: %s' % indexes_)
+    #     logging.info("max overlap %i, min_overlaps  %i" %(max_overlaps, min_overlaps))
+
+
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+
+    ds = 0.1
+    box_o = -1
+    w_o = 1
+    k_o = 0
+    probability_old = 1
+    probability_native_old = 1
+    collect_s = []
+    sweep_number = 0
+    alpha = 0.0
+    frozen =0
+    logging.info('scale alpha is: %f'%scale_alpha)
+    logging.info('shift alpha is: %f' %shift_alpha)
+    alpha_o = 0
+    
+    begin = True
+    #alphas = np.linspace(scale_alpha, 0, size)
+    # nonuniform setting for alpha
+    #t  = np.log(np.linspace(1,20 ,size))[::-1]
+    #t = t - np.min(t)
+    #alphas = t/np.max(t)*scale_alpha
+
+    coords_n, w_n, k_n, probability, probability_native_old  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=1)
+    
+    while ds > ds_min:
+        sweep_number += 1
+        failed_to_grow = 0
+        out_of_range = 0
+        zero_box = 0
+    #    if rank == 0:
+    #      s = s/size
+    #      counts = counts/size
+ 
+        s = comm.bcast(s, root=0)
+        counts = comm.bcast(counts, root=0)
+
+        for i in range(sweep_length):
+            
+            #if size < 1:
+            
+            #alpha = (np.random.rand()-shift_alpha)*scale_alpha 
+            alpha = scale_alpha #np.random.choice((0,scale_alpha))
+           # else:
+            #    alpha = alphas[rank]
+
+            coords_n, w_n, k_n, probability, probability_native  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=1)
+            if len(coords_n) < n:
+                failed_to_grow += 1
+            # print('skipping, failed to grow')
+            else:
+                #if probability != probability_old:
+                #   logging.error('probabilities are:  %e, %e' %(probability,probability_old)) 
+ 
+                coords_n = np.array(coords_n)  # .astype(float)
+
+                # u, c = np.unique(coords_n, axis=0, return_counts=True)
+                # if coords_n.shape != u.shape:
+                #     print('wrong SAW')
+
+                extreme_x = (max(coords_n[:, 0]) - min(coords_n[:, 0]) ) # otherwise the volume could be  zero!
+                # if extreme_x == 0:   extreme_x =1
+                extreme_y = (max(coords_n[:, 1]) - min(coords_n[:, 1]))
+                # if extreme_y == 0:  extreme_y =1
+                extreme_z = (max(coords_n[:, 2]) - min(coords_n[:, 2]))
+                # if extreme_z == 0:   extreme_z =1
+
+                box_n = aux.get_box(sx=indexes[0], sy=indexes[1], sz=indexes[2], l=(extreme_x, extreme_y, extreme_z))
+                #print(rank, box_n)
+                if (box_n == None):
+                    box_n = indexes_[-1]
+                    out_of_range += 1
+                elif box_n == 0:
+                    zero_box +=1
+                    #logging.info('configuration probability for 0th box for walker %i is: %e' % (rank, probability))
+                # print((w_n / w_o) * np.exp(-alpha * (k_o - k_n)), k_n, w_n)
+                # if np.random.random() < np.exp(s[box_o] - s[box_n]):
+                if frozen > sweep_length/2:
+                    logging.info("resetting frozen. Walker %i could not get out of box=%i" %(rank, box_o))
+               #if (np.random.random() < (w_n / w_o) * np.exp(-alpha_o*k_o
+               #     +alpha* k_n) * np.exp(s[box_o] - s[box_n])) or (frozen > sweep_length/5):
+                #if (np.random.random() <  (probability_old/probability) * np.exp(s[box_o] - s[box_n])) or (frozen > sweep_length/2):
+                if (np.random.random() < (probability_native/probability_native_old)) or (frozen > sweep_length/2):
+                #if (np.random.random() < 1)or (frozen > sweep_length/10):
+                #if (np.random.random() < np.exp(s[box_o] - s[box_n]))or (frozen > sweep_length/10):
+                    alpha_o = alpha
+                    box_o = box_n
+                    probability_old = probability
+                    probability_native_old = probability_native
+                    #if np.exp(-alpha*k_n)/w_n != wn[box_o]:
+                    #    wn[box_o] = (wn[box_o] + np.exp(-alpha*k_n)/w_n) / 2
+
+                    frozen =0
+                    w_o=w_n
+                    k_o=k_n
+                    
+                    #logging.info('probabilities should be equal: %e and %e'%(probability, np.exp(-alpha_o*k_o)/w_o))
+                else:
+    #                if box_o == box_n:
+                  #pass
+                  frozen +=1
+                # print(extreme_x, extreme_y, extreme_z, box_o)
+                counts[box_o] += 1
+                s[box_o] += ds
+              
+                # if box_o == 1:
+                #   print(w_o, wn[box_o])
+
+        # print(o_)
+        #counts = comm.reduce(counts, op=MPI.SUM, root=0)
+        #s = comm.reduce(s, op=MPI.SUM, root=0)
+        tmp_counts = comm.gather(counts, root=0)
+        tmp_s = comm.gather(s, root=0)
+
+        logging.info("fraction of generated confs for 0th box: %f, absolute number %i, rank %i" % (1.0*zero_box/(sweep_length-failed_to_grow), zero_box, rank))
+        if rank ==0:
+          counts = np.max(np.array(tmp_counts), axis=0)
+          s = np.max(np.array(tmp_s), axis=0)
+          #logging.info(tmp_counts)
+          t = counts[indexes_]
+          mean = sum(t) / len(t)
+        # print('sweep number', sweep_number, 'mean=', round(mean, 2), 'max=', max(t), 'min=', min(t), end='\r')
+        # print(t, end='\r')
+          logging.info("visits %s" %t)
+          logging.info("S %s" %s)
+        #print(t, s)
+        # print(wn)
+          logging.info('failed to grow rate: %2.0f%%, out of range: %2.0f%% '%(100.0*failed_to_grow/sweep_length, 100.0*out_of_range/sweep_length))
+          if (max(t) / mean - 1 < flatness) & (1 - min(t) / mean < flatness):
+              counts = 0 * counts
+              collect_s.append(s.copy())
+              ds = ds / decrease
+              logging.info("ds=%e, ds_min=%f, sweep number=%i" % (ds, ds_min, sweep_number))
+        ds = comm.bcast(ds, root=0)
+
+    return collect_s, sweep_number
 
 def WL(n, max_overlaps, min_overlaps=0, grain=1, exclude=(), alpha=0, sweep_length=1000, ds_min=0.0000001,
        flatness=0.3):

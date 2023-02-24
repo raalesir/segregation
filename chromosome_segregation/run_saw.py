@@ -2,11 +2,13 @@ import  numpy as np
 
 import  os
 import pandas as pd
+import json
+import shutil
 
 LOG_FILE="saw"+str(os.getpid())+".log"
 
 try:
-    from  chromosome_segregation.simulation import URW_saw,WL_saw
+    from  chromosome_segregation.simulation import URW_saw,WL_saw, WL_saw_mpi
     from chromosome_segregation.aux import cache_n_conf, get_grow_caches
 
     from chromosome_segregation  import overlaps
@@ -14,7 +16,7 @@ try:
     from  chromosome_segregation import  consts
     from chromosome_segregation import aux
 except:
-    from simulation import URW_saw, WL_saw
+    from simulation import URW_saw, WL_saw, WL_saw_mpi
     from aux import cache_n_conf, get_grow_caches
     import overlaps
     import consts
@@ -22,7 +24,7 @@ except:
 
 import  matplotlib.pyplot as plt
 
-from statistics import Counter
+from collections import Counter
 
 
 import  logging
@@ -175,7 +177,7 @@ def make_energy_plot(data, save_to):
     plt.savefig(save_to)
 
 
-def save_results(results,  density):
+def save_results(results,  density, parameters, s):
     """
 
     :param results:
@@ -193,17 +195,55 @@ def save_results(results,  density):
 
     OUT_FOLDER = os.path.join(OUT_FOLDER, experiment_folder)
 
-    with open(os.path.join(OUT_FOLDER, 'data.csv'), 'w') as f:
+    file = os.path.join(OUT_FOLDER, 'data.csv')
+    logging.info("saving results to: %s"%file)
+    with open(file, 'w') as f:
         for line in results:
             tmp = ','.join([str(item) for item in line])
+            logging.info("saving the line: %s" %tmp)
             f.write(tmp+ '\n')
 
-    #data = np.array(results)
+    file = os.path.join(OUT_FOLDER, 'params.json')
+    logging.info("saving parameters to %s" %file)
+    with open(file, 'w') as f:
+        json.dump(parameters, f)
 
-   # np.savetxt(os.path.join(OUT_FOLDER, 'data.csv'),data, fmt='%3.1f %3.1f %3.1f %.4f %i'  )
+    data = np.array(s)
+
+    np.savetxt(os.path.join(OUT_FOLDER, 's.csv'), data )
     
-    os.rename(LOG_FILE, os.path.join(OUT_FOLDER, LOG_FILE) )
+    shutil.copyfile(LOG_FILE, os.path.join(OUT_FOLDER, LOG_FILE) )
 
+
+def process_results_full(s, indexes, n, n_saws):
+    
+    res = []
+    omega = np.exp(s-np.min(s))
+    omega = omega/np.sum(omega)
+    fractions = np.cumsum(omega)
+    x, y, z = indexes[0], indexes[1], indexes[2]
+    
+    for i in range(len(omega)):
+        logging.info('number of SAWs for n=%i inside the box=%s is %e'  %(n, str((x[i],y[i], z[i])), fractions[i] * n_saws))
+        specific_free_energy_for_box = -np.log( fractions[i] * n_saws) /n
+        logging.info('specific free energy for n=%i and box=%s is: %5.3f' %(n, str((x[i],y[i], z[i])), specific_free_energy_for_box))
+     
+        res.append(
+            (n, y[i]*z[i], round(n/x[i]/y[i]/z[i], 3),  -round(np.log(n_saws *fractions[i])/n, 3))
+        )
+    return res
+
+def get_n_saws(n):
+
+    specific_excess_entropy = f(1 / n, a=0.375, b=.1347, c=-.2459)
+    logging.info('specific_excess_entropy from the analytical curve  for n=%i is: %4.3f' %(n, specific_excess_entropy))
+    n_conformations_total = overlaps.Overlap(n).n_conformations
+    logging.info('the total number of phantom conformation for n=%i is %e' %(n, n_conformations_total))
+    saw_fraction = np.exp(specific_excess_entropy * n)
+    n_saws = saw_fraction * n_conformations_total
+
+    logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
+    return n_saws
 
 
 def process_result(distribution, box, start_from, density):
@@ -214,12 +254,7 @@ def process_result(distribution, box, start_from, density):
     """
 
     n = get_n(box, density)
-    specific_excess_entropy = f(1 / n, a=0.375, b=.1347, c=-.2459)
-    logging.info('specific_excess_entropy from the analytical curve  for n=%i is: %4.3f' %(n, specific_excess_entropy))
-    n_conformations_total = overlaps.Overlap(n).n_conformations
-    logging.info('the total number of phantom conformation for n=%i is %e' %(n, n_conformations_total))
-    saw_fraction = np.exp(specific_excess_entropy * n)
-    n_saws = saw_fraction * n_conformations_total
+    n_saws = get_n_saws(n)
     logging.info('number of SAWs for n=%i is %e' %(n, n_saws))
     omega = np.exp(distribution - np.min(distribution))
     omega = omega/np.sum(omega)
@@ -243,7 +278,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
         #consts.caches = cache_n_conf(N_=max_n + 1, dx=25, dy=25, dz=25)
         logging.info('getting cached OR calculating from the scratch..')
         consts.caches = get_grow_caches(fname = GROW_CACHES_FOLDER ,
-                params=(max_n+1, 40,40,40))
+                params=(max_n+1, 80,80,80))
         logging.info('done calculating (n,dx,dy,dz) array')
         total_results = []
         total_results1 = []
@@ -253,12 +288,6 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
             #boxes = [[i, thickness_x, thickness_y] for i in range(n_boxes,
             #    n_boxes-5, -1)]
             logging.info('boxes: %s for thickness_x=%i, thickness_y=%i' % (boxes, thickness_x, thickness_y))
-
-            #nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes[0]-n_boxes[1]+1)
-            #nsteps = np.linspace(1000000 * max(thickness_x, thickness_y), 9000000, n_boxes)
-            #nsteps = [int(el - el % 1000) for el in nsteps]
-            #nsteps = nsteps[::-1]
-            #print('number of steps: %s' % nsteps)
 
             results = []
             for i in range(n_boxes[0]-n_boxes[1]+1):
@@ -272,31 +301,51 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     # all_boxes = URW_saw(n, nsteps[i], box=boxes[i])
 
                     extend_to_left = 1
-                    extend_to_right = 6#7
+                    extend_to_right = 10
+                    flatness = 0.2
+                    scale_alpha = 4.0
+                    ds_min = 0.000001
+                    decrease = 1.5
+                    sweep_length = 1000
+
                     indexes = aux.get_indexes(boxes[i],
                             extend_to_left=extend_to_left,
                             extend_to_right=extend_to_right, length=30)
                     logging.info(indexes)
-                    s, sweep_number =  WL_saw(n, indexes, sweep_length=5000,
-                            ds_min=0.000001, flatness=0.3, decrease=2.0,
-                            scale_alpha =2.0, shift_alpha=-0.0)
+
+                    parameters = {'extend_to_left':extend_to_left,
+                            "extend_to_right":extend_to_right,
+                            "flatness":flatness, "scale_alpha":scale_alpha,
+                            "ds_min":ds_min, 'decrease':decrease, 'sweep length':sweep_length}
+                        
+                    logging.info(parameters)
+                    s, sweep_number =  WL_saw_mpi(n, indexes, sweep_length=sweep_length,
+                            ds_min=ds_min, flatness=flatness, decrease=decrease,
+                            scale_alpha =scale_alpha, shift_alpha=-0.0)
                     logging.info('s: %s', s)
+
+                    results  = process_results_full(s[-1], indexes=(indexes[0],
+                        indexes[1], indexes[2]), n=n, n_saws=get_n_saws(n))
+                    
+                    logging.info("saving results")
+                    save_results(results, density, parameters, s)
                     # logging.info('making distribution for box %s' %boxes[i])
                     # logging.info(list_to_arr(all_boxes))
 
                     specific_free_energy = process_result(distribution=s[-1], box = boxes[i], start_from=extend_to_left, density=density)
                     # specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
 
-                    total_results1.append( (*boxes[i], specific_free_energy, n, s[-1]))
+
+                    total_results1.append( (*boxes[i], specific_free_energy, n,s[-1]) )
                     # results.append(list_to_arr(all_boxes))
 
                     # total_results.append(results)
 
-        save_results(total_results1, density)
+      #  save_results(total_results1, density, parameters)
 
 
         plot(total_results, thicknesses_x, thicknesses_y, n_boxes, density)
-
+        os.remove(LOG_FILE)
 
 
 if __name__ == "__main__":
@@ -311,7 +360,7 @@ if __name__ == "__main__":
             )
 
     density = 0.4
-    n_boxes = (13,11)
+    n_boxes = (25,25)
     #n_boxes = 7
 
     thicknesses_x = list(range(4, 5))

@@ -122,13 +122,15 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
-def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
+
+def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
     """
     recursive  regrow for SAW only.
     """
 
     if n == 1:
-        return res + [[0, 0, 0]], w, k, prob
+
+        return res + [[0, 0, 0]], w, k, prob, prob_native
     else:
         neighbours = [[n - 1, dx - 1, dy, dz],
                       [n - 1, dx + 1, dy, dz],
@@ -138,6 +140,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
                       [n - 1, dx, dy, dz + 1]
                       ]
         counts = []
+        counts_native = []
         tmp = 0
         all_coincidence = []
         collect_closeness_to_axis=[]
@@ -145,15 +148,17 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
             n_coincide = 1
-            # if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
-            #     n_coincide = 0
+
+            # 3 lines below commented on 21.11
+            if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
+                n_coincide = 0
             all_coincidence.append(n_coincide)
 
             # checking if outside the box
             # is_inside = 1  # aux.is_inside_box(*neighbour[1:])
             # sum of distances to OX axis
 
-            closeness_to_axis = abs(neighbour[2]) + abs(neighbour[3])
+            closeness_to_axis = (abs(neighbour[2]) + abs(neighbour[3]))/2
 
 
             collect_closeness_to_axis.append(closeness_to_axis)
@@ -167,6 +172,22 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
         if tmp == 0:
             # print('failed to grow... restarting')
             return res + [[0, 0, 0]], w, k, prob
+
+            counts_native.append(count * n_coincide)
+            if count > 0:
+                count =1 # we must select  from SAW space
+            counts.append(count * n_coincide * np.exp(-alpha*closeness_to_axis))
+
+            tmp += count #* n_coincide  # accumulating the denominator
+        
+        if sum(counts) == 0:
+            #print('failed to grow')
+            #sys.exit()
+            return res + [[0, 0, 0]], w, k, prob, prob_native
+        
+        if tmp == 0:
+            # print('failed to grow... restarting')
+            return res + [[0, 0, 0]], w, k, prob, prob_native
         # calculating W
         w = w * sum(counts) / tmp
         # w = w + np.log(sum(counts) / tmp)
@@ -178,25 +199,27 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
             # sys.exit()
 
         # normalising p_i
+        counts_native = [c / sum(counts_native) for c in counts_native]
         counts = [c / sum(counts) for c in counts]
 
         # making cumulative sum
         counts_ = np.cumsum(counts)
-
 
         # selecting one of neigbours
         selected = np.argmax(counts_ > np.random.random())
         # if tmp ==0: print('all zeros, no saws', selected, res, neighbours[selected][1:])
         res.append(neighbours[selected][1:])
 
-        prob = prob*counts[selected]
-        # prob  = prob + np.log(counts[selected])
 
+        # configuration probability
+        prob = prob  *  counts[selected]
+        prob_native = prob_native * counts_native[selected]
         if counts[selected] == 0:
             print('SELECTED NOT POSSIBLE')
 
         k += collect_closeness_to_axis[selected]
-        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob)
+
+        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native)
 
 
 def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):

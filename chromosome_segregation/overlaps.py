@@ -4,7 +4,8 @@
 """
 
 import math
-from math import comb
+#from math import comb
+from scipy.special import comb
 from collections import Counter
 import json
 import os, sys

@@ -12,7 +12,7 @@ from scipy.optimize import curve_fit
 
 import matplotlib.pyplot as plt
 import  statistics
-from statistics import  Counter
+from collections import  Counter
 
 try:
     import consts
@@ -447,7 +447,7 @@ def cache_n_conf(N_, dx, dy, dz):
                 for k in range(dz):
                     # res.append(n_conf(n + 1, i, j, k))
                     res.append(n_conf_large(n + 1, i, j, k))
-        print('current %i out of %i'%(n, N_))
+        logging.info('current %i out of %i'%(n, N_))
                     # print(n+1, i, j, k, n_conf(n+1,i,j,k))
     return np.array(res).reshape(N_, dx, dy, dz)  # .astype(int)
     # return re
