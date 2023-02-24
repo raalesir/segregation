@@ -122,13 +122,23 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
-def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
+def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native, box ,indexes):
     """
     recursive  regrow for SAW only.
     """
 
     if n == 1:
-        return res + [[0, 0, 0]], w, k, prob, prob_native
+        #print(indexes[0][box], indexes[1][box], indexes[2][box])
+        contact_list = [
+                 [1 ,0, 0],\
+                 [-1 ,0, 0],\
+                 [0 ,1, 0],\
+                 [0 ,-1, 0],\
+                 [0 ,0, 1],\
+                 [0 ,0, -1]\
+               ]
+        number_of_contacts = len([el for el in contact_list if el in res ])-1
+        return res + [[0, 0, 0]], w, k+number_of_contacts, prob, prob_native
     else:
         neighbours = [[n - 1, dx - 1, dy, dz],
                       [n - 1, dx + 1, dy, dz],
@@ -136,71 +146,118 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
                       [n - 1, dx, dy + 1, dz],
                       [n - 1, dx, dy, dz - 1],
                       [n - 1, dx, dy, dz + 1]
-                      ]
+                    ]
+        if len(res)>2: 
+           # removing the last in the result
+           neighbours = [el for el in neighbours if el[1:] != res[-2]]
         counts = []
         counts_native = []
         tmp = 0
-        all_coincidence = []
+        number_non_overlap  = 0
         collect_closeness_to_axis=[]
+        
         for neighbour in neighbours:
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
             n_coincide = 1
-            # 3 lines below commented on 21.11
+            is_minus2_in_contact = 0
+            number_of_contacts = 0
+
             if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
                 n_coincide = 0
-            all_coincidence.append(n_coincide)
+            else:
+               contact_list = [
+                 [neighbour[1]+1 ,neighbour[2], neighbour[3]],\
+                 [neighbour[1]-1 ,neighbour[2], neighbour[3]],\
+                 [neighbour[1] ,neighbour[2]+1, neighbour[3]],\
+                 [neighbour[1] ,neighbour[2]-1, neighbour[3]],\
+                 [neighbour[1] ,neighbour[2], neighbour[3]+1],\
+                 [neighbour[1] ,neighbour[2], neighbour[3]-1]\
+               ]
+               contact_array = [el for el in contact_list if (el in res) and (el != [0,0,0]) ]
+               number_of_contacts = len(contact_array)-1
+               #if len(res) >2:
+               #  is_minus2_in_contact = 1 if res[-3] in contact_array else 0
+               #else:
+               #  is_minus2_in_contact = 0
+
+            collect_closeness_to_axis.append(number_of_contacts)
+
+            #mask.append(n_coincide)
 
             # checking if outside the box
             # is_inside = 1  # aux.is_inside_box(*neighbour[1:])
             # sum of distances to OX axis
 
-            closeness_to_axis = (abs(neighbour[2]) + abs(neighbour[3]))/2
+            #out_of_box = sum(np.where(t1 > t2 , t1-t2, 0))
+            #out_of_box = (abs(neighbour[1]) + abs(neighbour[2]) + abs(neighbour[3]))/3
 
 
-            collect_closeness_to_axis.append(closeness_to_axis)
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
             
-            counts_native.append(count * n_coincide)
-            if count > 0:
-                count =1 # we must select  from SAW space
-            counts.append(count * n_coincide * np.exp(-alpha*closeness_to_axis))
-
+            #counts_native.append(count)
+            
+            if (count > 0) and (n_coincide == 1):
+                number_non_overlap += 1
+                #count =1 # we must select  randomly
+            
             tmp += count #* n_coincide  # accumulating the denominator
+
+            #counts.append(count * n_coincide *  np.exp(alpha*is_minus2_in_contact))
+            counts.append(count * n_coincide *  np.exp(alpha*number_of_contacts))
+
+           # counts.append(count * n_coincide)
+        #print(counts, counts_native)
+        #sys.exit()
+        
+        
+        if tmp == 0:
+            # print('failed to grow... restarting')
+            return res + [[0, 0, 0]], w, k, prob, prob_native
+        # calculating W
+        #w = w * sum(counts) / tmp
+        #         print(w)
+        #counts_native = np.multiply(mask, counts_native) # leaving just normilized entries for SAWs.
+        #counts = np.multiply(mask, counts) # leaving just normilized entries for SAWs.
+        #counts = np.multiply(counts, [np.exp(-el*alpha) for el in collect_closeness_to_axis]) # leaving just normilized entries for SAWs.
         
         if sum(counts) == 0:
             #print('failed to grow')
             #sys.exit()
             return res + [[0, 0, 0]], w, k, prob, prob_native
         
-        if tmp == 0:
-            # print('failed to grow... restarting')
-            return res + [[0, 0, 0]], w, k, prob, prob_native
-        # calculating W
-        w = w * sum(counts) / tmp
-        #         print(w)
         # normalising p_i
-        counts_native = [c / sum(counts_native) for c in counts_native]
-        counts = [c / sum(counts) for c in counts]
+        #counts_native = [c / sum(counts_native) for c in counts_native]
+        counts_ = [c / sum(counts) for c in counts]
+
 
         # making cumulative sum
-        counts_ = np.cumsum(counts)
+        counts__ = np.cumsum(counts_)
 
         # selecting one of neigbours
-        selected = np.argmax(counts_ > np.random.random())
+        selected = np.argmax(counts__ > np.random.random())#*sum(counts_))
         # if tmp ==0: print('all zeros, no saws', selected, res, neighbours[selected][1:])
         res.append(neighbours[selected][1:])
+        #print('counts native  %s' %counts_native)
 
+        #print('selected ', selected)
+        if (number_non_overlap == 1) and (counts_[selected] != 1):
+              logging.error("grow errori.Number non everlap is %i"%number_non_overlap)
+              sys.exit()
         # configuration probability
-        prob = prob  *  counts[selected]
-        prob_native = prob_native * counts_native[selected]
+        prob = prob  *  counts_[selected] #* number_non_overlap 
+        #if (prob > 1.01) and (alpha == 0.0):
+        #   print('prob: %f, counts   %s, %s; number non overlaps: %i, alpha: %f' %(prob, counts_,  counts, number_non_overlap, alpha))
+        #   sys.exit()
+        prob_native = prob_native + number_non_overlap #* counts_native[selected]
         if counts[selected] == 0:
+            print(counts, selected)
             print('SELECTED NOT POSSIBLE')
 
         k += collect_closeness_to_axis[selected]
-        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native)
+        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native, box, indexes)
 
 
 def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
