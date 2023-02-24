@@ -342,7 +342,7 @@ class Overlap:
 
 if __name__=="__main__":
 
-    overlaps = Overlap(12)
+    overlaps = Overlap(14)
     print(overlaps)
     print('calculating trajectories')
 

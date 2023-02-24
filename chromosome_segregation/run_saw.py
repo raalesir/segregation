@@ -287,8 +287,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     specific_free_energy = process_result(distribution=s[-1], box = boxes[i], start_from=extend_to_left, density=density)
                     # specific_free_energy = process_result(distribution=list_to_arr(all_boxes), box=boxes[i], density=density)
 
-                    total_results1.append( (*boxes[i], specific_free_energy,
-                        n,s[-1]))
+                    total_results1.append( (*boxes[i], specific_free_energy, n, s[-1]))
                     # results.append(list_to_arr(all_boxes))
 
                     # total_results.append(results)

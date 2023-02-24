@@ -122,13 +122,13 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
-def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
+def regrow_saw(n, dx, dy, dz, res, w, alpha, k ,prob):
     """
     recursive  regrow for SAW only.
     """
 
     if n == 1:
-        return res + [[0, 0, 0]], w, k
+        return res + [[0, 0, 0]], w, k, prob
     else:
         neighbours = [[n - 1, dx - 1, dy, dz],
                       [n - 1, dx + 1, dy, dz],
@@ -145,8 +145,8 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
             n_coincide = 1
-            if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
-                n_coincide = 0
+            # if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
+            #     n_coincide = 0
             all_coincidence.append(n_coincide)
 
             # checking if outside the box
@@ -160,34 +160,43 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k):
 
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
+            # if count >1: count=1
             counts.append(count * n_coincide * np.exp(-alpha*closeness_to_axis))
 
-            tmp += count * n_coincide  # accumulating the denominator
+            tmp += count #* n_coincide  # accumulating the denominator
         if tmp == 0:
             # print('failed to grow... restarting')
-            return res + [[0, 0, 0]], w, k
+            return res + [[0, 0, 0]], w, k, prob
         # calculating W
         w = w * sum(counts) / tmp
+        # w = w + np.log(sum(counts) / tmp)
         #         print(w)
+
+        if sum(counts) == 0:
+            return res + [[0, 0, 0]], w, k, prob
+            # print('failed to grow')
+            # sys.exit()
+
         # normalising p_i
         counts = [c / sum(counts) for c in counts]
 
         # making cumulative sum
         counts_ = np.cumsum(counts)
 
-        if sum(counts_) == 0:
-            print('failed to grow')
-            sys.exit()
+
         # selecting one of neigbours
         selected = np.argmax(counts_ > np.random.random())
         # if tmp ==0: print('all zeros, no saws', selected, res, neighbours[selected][1:])
         res.append(neighbours[selected][1:])
 
+        prob = prob*counts[selected]
+        # prob  = prob + np.log(counts[selected])
+
         if counts[selected] == 0:
             print('SELECTED NOT POSSIBLE')
 
         k += collect_closeness_to_axis[selected]
-        return regrow_saw(*neighbours[selected], res, w, alpha, k)
+        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob)
 
 
 def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
