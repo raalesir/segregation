@@ -216,7 +216,7 @@ def WL_saw(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.3,
         for i in range(sweep_length):
             alpha = (np.random.rand()-shift_alpha)*scale_alpha #choice((0,1,2))
 
-            coords_n, w_n, k_n = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0)
+            coords_n, w_n, k_n, prob = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1)
             if len(coords_n) < n:
                 failed_to_grow += 1
             # print('skipping, failed to grow')

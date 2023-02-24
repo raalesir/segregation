@@ -122,7 +122,12 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
         return regrow_biased(*neighbours[selected], res, w, alpha, k)
 
 
+<<<<<<< HEAD
 def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native, box ,indexes):
+=======
+
+def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
+>>>>>>> 2ce3e92646d0513bfd2b56f1c58ee3004319f4bd
     """
     recursive  regrow for SAW only.
     """
@@ -139,6 +144,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native, box ,indexes)
                ]
         number_of_contacts = len([el for el in contact_list if el in res ])-1
         return res + [[0, 0, 0]], w, k+number_of_contacts, prob, prob_native
+
     else:
         neighbours = [[n - 1, dx - 1, dy, dz],
                       [n - 1, dx + 1, dy, dz],

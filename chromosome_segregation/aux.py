@@ -639,6 +639,20 @@ def get_box(sx, sy, sz, l):
         return min_box
 
 
+def update_indexes(indexes):
+    
+    xs, ys, zs = indexes
+    
+    xs = [l for l in xs for i in range(2)]
+    ys = [l for l in ys for i in range(2)]
+
+    ys  = ys[1:]
+    ys.append(ys[-1]+1)
+    
+    zs = [l for l in zs for i in range(2)]
+
+    return xs,ys,zs
+
 
 def get_indexes(box, extend_to_left=1, extend_to_right=5, length=30):
     min_ = min(box)
@@ -677,3 +691,99 @@ def get_en_n_to_infty(data, filters={'min_n': 20, 'area': 25.0}):
                 pass
 
     return min_energy
+
+def get_rg(c):
+   "radius of gyration"
+   r_cm = np.mean(c, axis=0)
+   tmp = c -r_cm
+   tmp = [np.dot(el, el) for el in tmp]
+   return sum(tmp)/len(c)
+
+
+def get_energy(c):
+    
+    en = 0
+    for i in range(len(c)):
+        for j in range(i):
+            tmp = c[i] - c[j]
+#             print(tmp)
+            tmp = np.dot(tmp,tmp)
+            en += 1/np.sqrt(tmp)
+    return en
+
+def get_energy_one(c1, c2):
+    
+    if len(c1) > 0:
+        deltas = c1 - c2
+        if np.sum(deltas) != 0:
+            en = sum([ 1/np.sqrt(np.dot(el,el)) for el in deltas])
+        else:
+            en = 0.0
+    else:
+        en = 0.0
+    
+    return en
+
+
+def calculate_number_of_contacts(c):
+    """
+    """
+    nc=0
+    cc = c.tolist()
+    for i in range(c.shape[0]):
+        if i == 0: 
+            prev_ = []
+        else: 
+            prev_ = c[i-1, :]
+        if i == c.shape[0] - 1: 
+            next_ = []
+        else: 
+            next_ = c[i+1, :]
+        
+        contacts = [[ c[i][0]+1, c[i][1], c[i][2]],\
+                    [ c[i][0]-1, c[i][1], c[i][2]],\
+                    [ c[i][0], c[i][1]+1, c[i][2]],\
+                    [ c[i][0], c[i][1]-1, c[i][2]],\
+                    [ c[i][0], c[i][1], c[i][2]+1],\
+                    [ c[i][0], c[i][1], c[i][2]-1]\
+                   ]
+        
+        nc += len([cn  for cn in contacts if ((cn in cc) and (cn not in  [list(prev_), list(next_)])) ])
+        
+    return int(nc/2)
+
+def calculate_number_of_contacts_new(c):
+    """
+    """
+    nc=0
+    cc = c.tolist()
+    for i in range(c.shape[0]):
+#         if i == 0: 
+#             prev_ = []
+#         else: 
+#             prev_ = c[i-1, :]
+#         if i == c.shape[0] - 1: 
+#             next_ = []
+#         else: 
+#             next_ = c[i+1, :]
+        
+        contacts = [[ c[i][0]+1, c[i][1], c[i][2]],\
+                    [ c[i][0]-1, c[i][1], c[i][2]],\
+                    [ c[i][0], c[i][1]+1, c[i][2]],\
+                    [ c[i][0], c[i][1]-1, c[i][2]],\
+                    [ c[i][0], c[i][1], c[i][2]+1],\
+                    [ c[i][0], c[i][1], c[i][2]-1]\
+                   ]
+        
+        nc += len([cn  for cn in contacts if cn in cc]) -2
+        
+    return int(nc/2)
+
+def reject_outliers(data, m = 2.0):
+    d = np.abs(data - np.median(data))
+#     d = (data - np.median(data))
+    mdev = np.median(d)
+    s = d/mdev if mdev else 0.
+    return data[s<m]
+
+
