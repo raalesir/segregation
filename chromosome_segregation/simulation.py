@@ -13,7 +13,7 @@ except ImportError:
 from scipy.special import comb
 import  numpy as np
 import logging
-import math
+import math, sys
 
 def URW(n, n_steps):
     """
@@ -643,13 +643,13 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
         ncs[k] = 1
       return ncs
 
-    n_boxes = 10#int(n*1.2)
+    n_boxes = 60#int(n*1.2)
     
     s = np.zeros(n_boxes)
     counts = np.zeros(n_boxes)    
     logging.info('number of contact boxes is: %i' %(n_boxes))
     exclude = []
-    if n == 8:
+    if n == 12:
        exclude.append(7)
     indexes_ = [el for el in list(range(0,len(s))) if el not in exclude]
     wn = np.zeros(s.shape)
@@ -696,6 +696,9 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
     #t = t - np.min(t)
     #alphas = t/np.max(t)*scale_alpha
     bin_count = 0  # keeping statistics on last bin  visit  dynamics
+    l_min =  -0.7
+    l_max =  0.45
+    logging.info('lambda is random uniform %3.1f -- %3.1f' %(l_min, l_max))
 
     while ds > ds_min:
         sweep_number += 1
@@ -716,8 +719,8 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
         for i in range(sweep_length):
             
            #alpha = (np.random.rand()-shift_alpha)*scale_alpha 
-            alpha = scale_alpha #np.random.choice((0,scale_alpha))
-            alpha = np.random.uniform(-1.8,  .9)
+            #alpha = scale_alpha #np.random.choice((0,scale_alpha))
+            alpha = np.random.uniform(l_min,  l_max)
            # else:
             #    alpha = alphas[rank]
 
@@ -742,7 +745,9 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
                   if k_n in list_probs:
                     list_number_of_candidates[k_n].append(probability_native)
                     list_probs[k_n].append(probability) 
-
+                  #if k_n == 1:#indexes_[-1]:
+                  #    logging.debug("prob for the last bin %i is %e"%(k_n, probability))
+                  #    sys.exit()
 
         tmp_collect_contacts = comm.gather(collect_contacts, root=0)
         tmp_list_probs = comm.gather(list_probs, root =0)
@@ -765,11 +770,28 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
                #logging.debug('keys %s lens %i median %e entries %s' %(k, len(list_probs_global[k][0]), np.median(aux.reject_outliers(np.array(list_probs_global[k][0]))), list_probs_global[k][0]) )
 
                list_number_of_candidates_global[k] = [[item for sublist  in list_number_of_candidates_global[k] for item in sublist ]]
-           
+           logging.info('histogram for the %i box: %s' %(25, np.histogram(list_probs_global[25][0], bins=50)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(25, np.histogram(aux.reject_outliers(np.array(list_probs_global[25][0])), bins=50)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(1, np.histogram(np.log10(aux.reject_outliers(np.array(list_probs_global[1][0]))), bins=50)))
+ 
+           logging.info('histogram for the %i box, w/o outliers: %s' %(10, np.histogram(aux.reject_outliers(np.array(list_probs_global[10][0])), bins=100)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(10, np.histogram(np.log10(aux.reject_outliers(np.array(list_probs_global[10][0]))), bins=100)))
            logging.info('lengths of list_probs are: %s' %[len(list_probs_global[k][0]) for k in list_probs_global.keys() ])
            logging.info('means of number of candidates are: %s' %[np.mean(list_number_of_candidates_global[k][0])/n for k in list_number_of_candidates_global.keys() ])
            logging.info('list_probs are: %s' %[np.mean(aux.reject_outliers(np.array(list_probs_global[k][0]))) for k in list_probs_global.keys() ])
-           #logging.info('list_probs are: %s' %[list_probs_global[k][0] for k in list_probs_global.keys() ])
+           logging.info('list_probs medians are: %s' %[np.median(np.array(list_probs_global[k][0])) for k in list_probs_global.keys() ])
+           logging.info('list_probs means are: %s' %[np.mean(np.array(list_probs_global[k][0])) for k in list_probs_global.keys() ])
+           w_means = []; bins_ = 50; min_ = 0.00
+           for k in list_probs_global.keys():
+             vals, bins = np.histogram(np.log10(aux.reject_outliers(np.array(list_probs_global[k][0]))), bins=bins_)
+             bins = bins[:-1]
+             vals = vals/np.sum(vals)
+             vals1 = vals[vals > min_]
+             vals1 = vals1/np.sum(vals1)
+             w_mean = np.dot(bins[vals >min_],vals1)
+             w_means.append(w_mean)
+           logging.info("weighted means params are: %i, %f"%(bins_, min_))
+           logging.info('weighted means are: %s' %w_means)
 
            global_contacts = [el for  sub in tmp_collect_contacts for el in sub]
            logging.info("the length of global contact list is: %i" %len(global_contacts))

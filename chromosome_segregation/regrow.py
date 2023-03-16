@@ -131,6 +131,16 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
 
     if n == 1:
         #print(indexes[0][box], indexes[1][box], indexes[2][box])
+        #contact_list = [[ dx - 1, dy, dz],
+        #              [ dx + 1, dy, dz],
+        #              [ dx, dy - 1, dz],
+        #              [ dx, dy + 1, dz],
+        #              [ dx, dy, dz - 1],
+        #              [ dx, dy, dz + 1]
+        #            ]
+        #print(contact_list)
+        #sys.exit()
+
         contact_list = [
                  [1 ,0, 0],\
                  [-1 ,0, 0],\
@@ -163,10 +173,9 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
             n_coincide = 1
-            is_minus2_in_contact = 0
             number_of_contacts = 0
 
-            if (neighbour[1:] in res) or neighbour[1:] == [0, 0, 0]:
+            if (neighbour[1:] in res) or (neighbour[1:] == [0, 0, 0]):
                 n_coincide = 0
             else:
                contact_list = [
@@ -200,7 +209,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
             #             print(coords, n_coincide)
             count = consts.caches[neighbour[0] - 1, abs(neighbour[1]), abs(neighbour[2]), abs(neighbour[3])]
             
-            #counts_native.append(count)
+            counts_native.append(n_coincide)
             
             if (count > 0) and (n_coincide == 1):
                 number_non_overlap += 1
@@ -208,8 +217,8 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
             
             tmp += count #* n_coincide  # accumulating the denominator
 
-            #counts.append(count * n_coincide *  np.exp(alpha*is_minus2_in_contact))
             counts.append(count * n_coincide *  np.exp(alpha*number_of_contacts))
+           # counts.append(count  *  np.exp(alpha*number_of_contacts))
 
            # counts.append(count * n_coincide)
         #print(counts, counts_native)
@@ -241,14 +250,19 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
 
         # selecting one of neigbours
         selected = np.argmax(counts__ > np.random.random())#*sum(counts_))
+
+        # if overlap selected -- return
+        if counts_native[selected] == 0:
+           return res + [[0, 0, 0]], w, k, prob, prob_native
+
         # if tmp ==0: print('all zeros, no saws', selected, res, neighbours[selected][1:])
         res.append(neighbours[selected][1:])
         #print('counts native  %s' %counts_native)
 
         #print('selected ', selected)
-        if (number_non_overlap == 1) and (counts_[selected] != 1):
-              logging.error("grow errori.Number non everlap is %i"%number_non_overlap)
-              sys.exit()
+        #if (number_non_overlap == 1) and (counts_[selected] != 1):
+        #      logging.error("grow errori.Number non everlap is %i"%number_non_overlap)
+        #      sys.exit()
         # configuration probability
         prob = prob  *  counts_[selected] #* number_non_overlap 
         #if (prob > 1.01) and (alpha == 0.0):
