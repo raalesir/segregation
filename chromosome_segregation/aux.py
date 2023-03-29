@@ -787,3 +787,20 @@ def reject_outliers(data, m = 2.0):
     return data[s<m]
 
 
+def is_in_box(coords, limits):
+    """
+    checking if the configuration fits inside the box
+    limits is a sorted list
+    """
+    
+    dx = np.max(coords[:, 0]) - np.min(coords[:, 0])
+    dy = np.max(coords[:, 1]) - np.min(coords[:, 1])
+    dz = np.max(coords[:, 2]) - np.min(coords[:, 2])
+    
+    dx, dy, dz = sorted((dx, dy, dz))
+    
+    if (dx <= limits[0]) & (dy <=limits[1]) & (dz <= limits[2]):
+        return True
+    else:
+        return False
+    
