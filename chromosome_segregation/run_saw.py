@@ -304,7 +304,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
                     extend_to_left = 1
                     extend_to_right = 13
-                    flatness = 0.1
+                    flatness = 0.2
                     scale_alpha = 0.0
                     ds_min = 0.000001
                     decrease = 2.0
