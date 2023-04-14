@@ -124,7 +124,7 @@ def regrow_biased(n, dx, dy, dz, res, w, alpha, k):
 
 
 
-def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
+def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native, limits ,use_limits):
     """
     recursive  regrow for SAW only.
     """
@@ -173,6 +173,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
 
             # if there is already such a point, set n_coincide=0 to filter out that trial
             n_coincide = 1
+            is_outside = 1
             number_of_contacts = 0
 
             if (neighbour[1:] in res) or (neighbour[1:] == [0, 0, 0]):
@@ -192,6 +193,13 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
                #  is_minus2_in_contact = 1 if res[-3] in contact_array else 0
                #else:
                #  is_minus2_in_contact = 0
+            if use_limits:
+              if  (aux.is_in_box(np.array(res +  [neighbour[1:]]), limits=limits)):
+                 is_inside = 1
+              else:
+                 is_inside = 0
+            else:
+              is_inside = 1
 
             collect_closeness_to_axis.append(number_of_contacts)
 
@@ -213,12 +221,12 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
             
             if (count > 0) and (n_coincide == 1):
                 number_non_overlap += 1
-                #count =1 # we must select  randomly
+                #count =1
             
             tmp += count #* n_coincide  # accumulating the denominator
 
-            counts.append(count * n_coincide *  np.exp(alpha*number_of_contacts))
-           # counts.append(count  *  np.exp(alpha*number_of_contacts))
+            counts.append(count * n_coincide * is_inside*  np.exp(alpha*number_of_contacts))
+            #counts.append(count  *  is_inside* np.exp(alpha*number_of_contacts))
 
            # counts.append(count * n_coincide)
         #print(counts, counts_native)
@@ -257,6 +265,11 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
 
         # if tmp ==0: print('all zeros, no saws', selected, res, neighbours[selected][1:])
         res.append(neighbours[selected][1:])
+
+        # if the grown part escapes the box --> exit
+        if (not (aux.is_in_box(np.array(res), limits=limits))) and  use_limits:
+            return res + [[0, 0, 0]], w, k, prob, prob_native
+
         #print('counts native  %s' %counts_native)
 
         #print('selected ', selected)
@@ -274,7 +287,7 @@ def regrow_saw(n, dx, dy, dz, res, w, alpha, k, prob, prob_native):
             print('SELECTED NOT POSSIBLE')
 
         k += collect_closeness_to_axis[selected]
-        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native)
+        return regrow_saw(*neighbours[selected], res, w, alpha, k, prob, prob_native, limits, use_limits)
 
 
 def regrow_saw_segregation_prove(n, dx, dy, dz, res, w, alpha, k, coords):
