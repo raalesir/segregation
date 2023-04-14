@@ -247,28 +247,42 @@ class Overlap:
     def get_overlaps(self):
         """
         """
-        overlaps = []
-        ncs = []
+       # overlaps = []
+       # ncs = []
+
+        self.overlaps_hist = {}
+        self.numbers_of_contact = {}
 
         length = self.n_conformations # len(Overlap.keep_result.all)
         i=0
         for conf in self.encoded_conformations:
              # conf is like [ (1,0,0), (2,0,0), (1,0,0), (0,0,0) ]
             if i%10000 == 0:
-                print('passed', '%4.2f' %(i/length * 100) ,end='\r')
+                print('passed', '%6.4f' %(i/length * 100) ,end='\r')
             i +=1
             number_overlaps = sum([comb(lst, 2) for lst in Counter(conf).values()])
-            overlaps.append(
-                number_overlaps
-            )
+
+            if number_overlaps in self.overlaps_hist:
+                self.overlaps_hist[number_overlaps] +=1
+            else:
+                self.overlaps_hist[number_overlaps] = 1
+
+            #overlaps.append(
+            #    number_overlaps
+            #)
             if number_overlaps == 0:
-                ncs.append(self.get_number_of_contacts(conf))
+              nc = self.get_number_of_contacts(conf)
+              if nc  in self.numbers_of_contact:
+                    self.numbers_of_contact[nc] +=1
+              else:
+                    self.numbers_of_contact[nc] = 1
+         #   ncs.append(self.get_number_of_contacts(conf))
 
 
-        counts = Counter(overlaps)
-        self.overlaps_hist = dict(counts)
+        #counts = Counter(overlaps)
+        #self.overlaps_hist = dict(counts)
 
-        self.numbers_of_contact = dict(Counter(ncs))
+        #self.numbers_of_contact = dict(Counter(ncs))
 
 
     def get_overlaps_histogram(self):
@@ -346,7 +360,7 @@ class Overlap:
 
 if __name__=="__main__":
 
-    overlaps = Overlap(10)
+    overlaps = Overlap(16)
     print(overlaps)
     print('calculating trajectories')
 
