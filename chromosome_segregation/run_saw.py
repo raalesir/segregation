@@ -1,6 +1,6 @@
 import  numpy as np
 
-import  os
+import  os, sys
 import pandas as pd
 import json
 import shutil
@@ -294,7 +294,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
             for i in range(n_boxes[0]-n_boxes[1]+1):
             #for i in range(len(boxes)):
                 n = get_n(boxes[i],density)
-                n = 14
+                n = 60
                 # print(
                 #     "density: %f, box: %s, #monomers: %i, #steps: %i" % (density, boxes[i], n, nsteps[i]))
 
@@ -306,7 +306,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
                     extend_to_right = 13
                     flatness = 0.2
                     scale_alpha = 0.0
-                    ds_min = 0.0000001
+                    ds_min = 0.000001
                     decrease = 2.0
                     sweep_length = 1000
 
@@ -329,7 +329,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
                     results  = process_results_full(s[-1], indexes=(indexes[0],
                         indexes[1], indexes[2]), n=n, n_saws=get_n_saws(n))
-                    
+                    sys.exit() 
                     logging.info("saving results")
                     save_results(results, density, parameters, s)
                     # logging.info('making distribution for box %s' %boxes[i])
@@ -352,7 +352,7 @@ def run(density, n_boxes, thicknesses_x, thicknesses_y):
 
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=4)
+    np.set_printoptions(precision=5)
     logging.basicConfig(
                 level=logging.DEBUG,
                 format="%(asctime)s [%(levelname)s] %(module)s.%(funcName)s:%(lineno)d %(message)s",

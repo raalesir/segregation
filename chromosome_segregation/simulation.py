@@ -13,7 +13,7 @@ except ImportError:
 from scipy.special import comb
 import  numpy as np
 import logging
-import math
+import math, sys
 
 def URW(n, n_steps):
     """
@@ -636,6 +636,11 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
     """
     WL  procedure for calculation of SAW enropies inside matroshkas
     """
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
     def add_key(k, ncs):
       if k in ncs.keys():
         ncs[k]+=1
@@ -643,36 +648,41 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
         ncs[k] = 1
       return ncs
 
-    n_boxes = 10#int(n*1.2)
+    n_boxes = 60#int(n*1.2)
     
     s = np.zeros(n_boxes)
     counts = np.zeros(n_boxes)    
-    logging.info('number of contact boxes is: %i' %(n_boxes))
+    if rank ==0: logging.info('number of contact boxes is: %i' %(n_boxes))
     exclude = []
-    if n == 8:
+
+    #for i in range(5):
+    #  exclude.append(i)
+    #for i in range(50,n_boxes):
+    #  exclude.append(i)
+
+    if n == 12:
        exclude.append(7)
     indexes_ = [el for el in list(range(0,len(s))) if el not in exclude]
     wn = np.zeros(s.shape)
     nc_bin_o = int((indexes_[-1] + indexes_[0]) /2)
-    logging.info('first bin is: %i' %nc_bin_o)
- 
-    logging.info('s size is: %s' % (s.shape))
-    logging.info('counts size is: %s' % (counts.shape))
+    if rank ==0: 
+      logging.info('first bin is: %i' %nc_bin_o)
+      logging.info('s size is: %s' % (s.shape))
+      logging.info('counts size is: %s' % (counts.shape))
 
-    logging.info('indexes: %s' % indexes_)
+      logging.info('indexes: %s' % indexes_)
 
-    from mpi4py import MPI
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
 
     if rank ==0:
       number_of_contacts_global = {}
       list_probs_global = {}
       list_number_of_candidates_global = {}
+      list_is_in_box_global = {}
+
       for i in range(n_boxes):
         list_probs_global[i] = []
         list_number_of_candidates_global[i] = []
+        list_is_in_box_global[i] = [0,0]
 
     ds = 0.1
     ds0 = ds
@@ -685,7 +695,7 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
     sweep_number = 0
     alpha = 0.0
     frozen =0
-    logging.info('scale alpha is: %f'%scale_alpha)
+    if rank==0: logging.info('scale alpha is: %f'%scale_alpha)
     #logging.info('shift alpha is: %f' %shift_alpha)
     alpha_o = 0
     
@@ -696,6 +706,20 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
     #t = t - np.min(t)
     #alphas = t/np.max(t)*scale_alpha
     bin_count = 0  # keeping statistics on last bin  visit  dynamics
+    l_min =    -0.55
+    l_max =   0.0# 0.45
+    if rank==0: logging.info('lambda is random uniform %3.1f -- %3.1f' %(l_min, l_max))
+
+    limits = (4,4,9)
+    if list(limits) != sorted(limits):
+      sys.exit('limits not  ordered')
+
+    use_limits = False
+    if rank==0: logging.info('using limits: %s' %use_limits)
+
+    weights = [6.344290925568952e-38, 5.739868780297023e-38, 5.180026268317236e-38, 5.700551944162312e-38, 5.337540337636483e-38, 5.5132091306141e-38, 5.419443516755467e-38, 5.70169212936384e-38, 5.954933210806293e-38, 6.173180795956495e-38, 6.393662373230796e-38, 6.638946717049889e-38, 6.993977891749793e-38, 7.29894353030415e-38, 7.758981860879967e-38, 8.814548875170777e-38, 9.868286103192475e-38, 1.1306040569344248e-37, 1.330557659798894e-37, 1.591328957126254e-37, 1.921063356965918e-37, 2.4773406854238888e-37, 2.9829843241748783e-37, 3.997981644659399e-37, 5.0830234414281935e-37, 6.875024538853313e-37, 9.37827185625906e-37, 1.2623923999749627e-36, 1.6637357035603044e-36, 2.3118008469938183e-36, 3.27838285180838e-36, 4.618877414274554e-36, 6.718752228582831e-36, 1.0045930327461594e-35, 1.4662230886624924e-35, 2.156592784337575e-35, 3.2226526621088484e-35, 5.045880878843973e-35, 7.767354128038709e-35, 1.2125276662954397e-34, 1.9766187967685303e-34, 3.1645296378769967e-34, 5.049686746711974e-34, 8.526662107989344e-34, 1.3954514339964443e-33, 2.395935422205038e-33, 4.2212062515930535e-33, 7.050644069755603e-33, 1.2630580908550394e-32, 2.0999009375612936e-32, 3.8916993002894344e-32, 7.233169166141739e-32, 1.2246613553031477e-31, 2.4334979079417693e-31, 3.9789107695009255e-31, 7.71817670339038e-31, 1.4717380889780218e-30, 2.9067681172282963e-30, 5.357396468607142e-30, 1.0132501816689736e-29]
+
+
 
     while ds > ds_min:
         sweep_number += 1
@@ -705,29 +729,33 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
  
         list_probs = {}
         list_number_of_candidates = {}
+        list_is_in_box = {}
+
         for i in range(n_boxes):
           list_probs[i] = []
           list_number_of_candidates[i] = []
- 
+          list_is_in_box[i] = []
+
+
         number_of_contacts = {}
         collect_contacts = []
+        collect_probs = []
         collect_number_of_candidates = []
 
         for i in range(sweep_length):
             
            #alpha = (np.random.rand()-shift_alpha)*scale_alpha 
-            alpha = scale_alpha #np.random.choice((0,scale_alpha))
-            alpha = np.random.uniform(-1.8,  .9)
+           # alpha = np.random.choice((0,l_min, l_max))
+            alpha = np.random.uniform(l_min,  l_max)
            # else:
             #    alpha = alphas[rank]
 
-            coords_n, w_n, k_n, probability, probability_native  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=0)
+            coords_n, w_n, k_n, probability, probability_native  = regrow_saw(n, 0, 0, 0, [], w=1, alpha=alpha, k=0, prob=1, prob_native=0, limits=limits, use_limits=use_limits)
             if len(coords_n) < n:
                 failed_to_grow += 1
             # print('skipping, failed to grow')
             else:
                 coords_n = np.array(coords_n)  # .astype(float)
-                
                 if math.isnan(probability):
                    logging.error("probability is undefined") 
                 
@@ -739,14 +767,29 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
                 else:
                   # collecting number of contacts for a configuration                
                   collect_contacts.append(k_n)
+                  collect_probs.append(probability)
                   if k_n in list_probs:
                     list_number_of_candidates[k_n].append(probability_native)
-                    list_probs[k_n].append(probability) 
-
+                    list_probs[k_n].append(probability)
+                    list_is_in_box[k_n].append(aux.is_in_box(coords_n, limits=limits))
+                    #if (k_n <30) and (aux.is_in_box(coords_n, limits=limits)):
+                    #    logging.debug("config for %i contacts inside %s box are:  %s "%(k_n, limits, repr(coords_n)))
+ 
+                  #if k_n == 1:#indexes_[-1]:
+                  #    logging.debug("prob for the last bin %i is %e"%(k_n, probability))
+                  #    sys.exit()
+        
+        #calculating the fraction of confs inside the box
+        for i in range(n_boxes):
+           list_is_in_box[i] = list_is_in_box[i].count(True), len(list_is_in_box[i])
+ 
+       
 
         tmp_collect_contacts = comm.gather(collect_contacts, root=0)
+        tmp_collect_probs = comm.gather(collect_probs, root=0)
         tmp_list_probs = comm.gather(list_probs, root =0)
         tmp_list_number_of_candidates = comm.gather(list_number_of_candidates, root =0)
+        tmp_list_is_in_box = comm.gather(list_is_in_box, root =0)
 
         if rank == 0:
            for d in tmp_list_probs:
@@ -755,26 +798,57 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
            for d in tmp_list_number_of_candidates:
              for k in d.keys():
                list_number_of_candidates_global[k].append(d[k])  
-
+           for d in tmp_list_is_in_box:
+              for k in d.keys():
+                if k in list_is_in_box_global:
+                  list_is_in_box_global[k][0] += d[k][0]
+                  list_is_in_box_global[k][1] += d[k][1]
+                else:
+                  list_is_in_box_global[k] = list(d[k])  
 
            for k in list_probs_global.keys():
-             if len(list_probs_global[k][0] ) < 100000:  
+             if len(list_probs_global[k][0] ) < 200000:  
                list_probs_global[k] = [[item for sublist  in list_probs_global[k] for item in sublist ]]
-              # if (len(list_probs_global[k][0]) > 0) and (np.median(aux.reject_outliers(np.array(list_probs_global[k][0]))) == np.nan):
-              #    logging.error('weird probs detected %s'%(list_probs_global[k][0]))
-               #logging.debug('keys %s lens %i median %e entries %s' %(k, len(list_probs_global[k][0]), np.median(aux.reject_outliers(np.array(list_probs_global[k][0]))), list_probs_global[k][0]) )
-
+               #list_is_in_box_global[k] = [[item for sublist  in list_is_in_box_global[k] for item in sublist ]]
                list_number_of_candidates_global[k] = [[item for sublist  in list_number_of_candidates_global[k] for item in sublist ]]
-           
+
+           logging.info('histogram for the %i box: %s' %(25, np.histogram(list_probs_global[25][0], bins=50)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(45, np.histogram(aux.reject_outliers(np.array(list_probs_global[45][0])), bins=20)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(1, np.histogram(np.log10(aux.reject_outliers(np.array(list_probs_global[1][0]))), bins=50)))
+ 
+           logging.info('histogram for the %i box, w/o outliers: %s' %(10, np.histogram(aux.reject_outliers(np.array(list_probs_global[10][0])), bins=100)))
+           logging.info('histogram for the %i box, w/o outliers: %s' %(5, np.histogram(aux.reject_outliers(np.array(list_probs_global[5][0])), bins=20)))
            logging.info('lengths of list_probs are: %s' %[len(list_probs_global[k][0]) for k in list_probs_global.keys() ])
            logging.info('means of number of candidates are: %s' %[np.mean(list_number_of_candidates_global[k][0])/n for k in list_number_of_candidates_global.keys() ])
            logging.info('list_probs are: %s' %[np.mean(aux.reject_outliers(np.array(list_probs_global[k][0]))) for k in list_probs_global.keys() ])
-           #logging.info('list_probs are: %s' %[list_probs_global[k][0] for k in list_probs_global.keys() ])
+           logging.info('list_probs medians are: %s' %[np.median(np.array(list_probs_global[k][0])) for k in list_probs_global.keys() ])
+           logging.info('list_probs means are: %s' %[np.mean(np.array(list_probs_global[k][0])) for k in list_probs_global.keys() ])
+           logging.info('keys  are: %s' %[k for k in list_probs_global.keys() ])
+           logging.info('fraction is in the box %s is: %s' %(limits, [1.0*list_is_in_box_global[k][0]/list_is_in_box_global[k][1] for k in list_probs_global.keys() if list_is_in_box_global[k][1]>0 ]))
+           logging.info('actual numbers  in the box %s is: %s' %(limits, [list_is_in_box_global[k]  for k in list_probs_global.keys()]))
+
+
+           w_means = []; bins_ = 20; min_ = 0.05; mean_dev = 0.1
+           for k in list_probs_global.keys():
+             vals, bins = np.histogram(aux.reject_outliers(np.array(list_probs_global[k][0])), bins=bins_)
+             bins = (bins[:-1] + bins[1:])/2
+             #w_mean = bins[np.argmax(vals)]
+             vals = vals/np.sum(vals)
+             vals1 = vals[vals > min_]
+             vals1 = vals1/np.sum(vals1)
+             w_mean = np.dot(bins[vals >min_],vals1)
+             #w_mean = np.median(bins[np.where((np.cumsum(vals1) >= 0.5 - mean_dev)  & (np.cumsum(vals1) <= 0.5 + mean_dev))])
+             w_means.append(w_mean)
+           #logging.info("weighted means params are: bins %i, mean-dev %f, "%(bins_, mean_dev))
+           logging.info('weighted means are: %s' %w_means)
 
            global_contacts = [el for  sub in tmp_collect_contacts for el in sub]
            logging.info("the length of global contact list is: %i" %len(global_contacts))
+           global_probs = [el for  sub in tmp_collect_probs for el in sub]
+           logging.info("the length of global probs list is: %i" %len(global_probs))
+           zipped = zip(global_contacts, global_probs)
 
-           for nc_bin_n in global_contacts:
+           for nc_bin_n, probability in zipped:
     
                   if (nc_bin_n  > indexes_[-1]):
                       nc_bin_n  = indexes_[-1]
@@ -797,11 +871,13 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
                   
 
                   rnd = np.random.random()
+                  #if (s[nc_bin_o]+np.log(weights[nc_bin_o]) > s[nc_bin_n]+np.log(weights[nc_bin_n])) or (rnd < np.exp(s[nc_bin_o] - s[nc_bin_n])*weights[nc_bin_o]/weights[nc_bin_n]):
+                  #if (s[nc_bin_o]+np.log(probability_old) > s[nc_bin_n]+np.log(probability)) or (rnd < np.exp(s[nc_bin_o] - s[nc_bin_n])*probability_old/probability) or frozen > 1000:
                   if (s[nc_bin_o] > s[nc_bin_n]) or (rnd < np.exp(s[nc_bin_o] - s[nc_bin_n])):
-                      if s[nc_bin_o] - s[nc_bin_n] >  5:
-                        logging.info('rare bin visited rnd=%f, from %5.2f to %5.2f, from box %i to box %i'%(rnd, s[nc_bin_o] , s[nc_bin_n], nc_bin_o,     nc_bin_n))
-                      if s[nc_bin_o] - s[nc_bin_n] < - 5:
-                        logging.info('low prob event rnd=%f, from %5.2f to %5.2f, from box %i to box %i'%(rnd, s[nc_bin_o] , s[nc_bin_n], nc_bin_o, nc_bin_n))
+                      #if s[nc_bin_o] - s[nc_bin_n] >  5:
+                      #  logging.info('rare bin visited rnd=%f, from %5.2f to %5.2f, from box %i to box %i'%(rnd, s[nc_bin_o] , s[nc_bin_n], nc_bin_o,     nc_bin_n))
+                      #if s[nc_bin_o] - s[nc_bin_n] < - 5:
+                      #  logging.info('low prob event rnd=%f, from %5.2f to %5.2f, from box %i to box %i'%(rnd, s[nc_bin_o] , s[nc_bin_n], nc_bin_o, nc_bin_n))
                       #if nc_bin_n ==  indexes_[-1]:
                       #   logging.debug("entered the last bin %f with %f from bin %f having %f"%(nc_bin_n, s[nc_bin_n], nc_bin_o, s[nc_bin_o]))
                       #   bin_count  = counts[nc_bin_n]
@@ -820,6 +896,7 @@ def WL_saw_mpi_fast(n, indexes, sweep_length=1000, ds_min=0.0000001, flatness=0.
                       
                   else:
                     pass
+                    frozen +=1
                   counts[nc_bin_o] += 1
                   s[nc_bin_o] += ds
                   
