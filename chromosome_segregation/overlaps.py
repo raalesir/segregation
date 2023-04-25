@@ -289,7 +289,8 @@ class Overlap:
     def get_overlaps_histogram(self):
 
         fname = "counts_%i.json" % (self.n)
-        if not os.path.isfile(fname):
+        fname_contacts  = "contacts_%i.json" % (self.n)
+        if not (os.path.isfile(fname) and os.path.isfile(fname_contacts)):
 
             # self.calculate_all_conformations() # all confs are encoded as a list of strings like 'i+i+i-i-'
 
@@ -312,8 +313,11 @@ class Overlap:
             dct = open(fname, 'r').read()
             dct = json.loads(dct)
             self.overlaps_hist = dict(zip([int(eval(el)) for el in dct.keys()], dct.values()))
+            dct = open(fname_contacts, 'r').read()
+            dct = json.loads(dct)
+            self.contacts_hist = dict(zip([int(eval(el)) for el in dct.keys()], dct.values()))
 
-        return self.overlaps_hist
+        return self.overlaps_hist,self.contacts_hist
 
 
 
