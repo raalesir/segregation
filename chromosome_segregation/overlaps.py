@@ -315,9 +315,9 @@ class Overlap:
             self.overlaps_hist = dict(zip([int(eval(el)) for el in dct.keys()], dct.values()))
             dct = open(fname_contacts, 'r').read()
             dct = json.loads(dct)
-            self.contacts_hist = dict(zip([int(eval(el)) for el in dct.keys()], dct.values()))
+            self.numbers_of_contact = dict(zip([int(eval(el)) for el in dct.keys()], dct.values()))
 
-        return self.overlaps_hist,self.contacts_hist
+        return self.overlaps_hist,self.numbers_of_contact
 
 
 
